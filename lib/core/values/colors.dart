@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+
+abstract class AppColors {
+  //Define App color here
+  static const Primary = Color(0xFF53B27F);
+  static const LOGO = Color(0xFFF16928);
+  static const BgSplash = Color(0xFF2A60B6);
+  static const Primary_1 = Color(0xFF409266);
+  static const Primary_2 = Color(0xFF2A60B6);
+  static const Light = Color(0xFF3779D3);
+  static const PrimaryDark = Color(0xFF35710D);
+  static const Black = Color(0xFF000000);
+  static const LighBlack = Color(0xFF111111);
+  static const Red = Color(0xFFFF0000);
+  static const White = Color(0xFFFFFFFF);
+  static const GrayCool = Color(0xFFF8F8FC);
+  static const ReadNoti = Color(0xFFFAFAFA);
+  static const Gray = Color(0xFFCECECE);
+  static const GrayLight = Color(0xFFF4F4FB);
+  static const DarkGray = Color(0xFFAAAAAA);
+  static const TextGray = Color(0xFF9E9FB3);
+  static const CoolDark = Color(0xFF040752);
+  static const DividerColor = Color(0xFFEEEEEE);
+  static const Border = Color(0xFFEEEEEE);
+  static const Medium = Color(0xFF525586);
+  static const Dialog = Color(0x80161616);
+  static const Secondary = Color(0xFF1C1550);
+  static const Secondary1 = Color(0xFF494473);
+  static const Secondary2 = Color(0xFF777396);
+  static const Secondary3 = Color(0xFFA4A2B9);
+  static const Secondary4 = Color(0xFFD2D0DC);
+  static const TagBlue = Color(0xFF007AFF);
+  static const PrimaryText = Color(0xFF171923);
+  static const SecondaryText = Color(0xFF4A5568);
+  static const PlaceHolderText = Color(0xFFA0AEC0);
+  static const ErrorText = Color(0xFFF04438);
+  static const SuccessText = Color(0xFF38A169);
+  static const PrimaryButton = Color(0xFF53B27F);
+  static const BrandText = Color(0xFF53B27F);
+  static const Teritary = Color(0xFF718096);
+  static const SecondaryButton = Color(0xFFEDF2F7);
+  static const PrimaryGradientButton = Color(0xFF53B27F);
+  static const SecondaryGradientButton = Color(0xFF409266);
+  static const Red50 = Color(0xFFFEF3F2);
+  static const Green50 = Color(0xFFF0FFF4);
+  static const BorderPrimary = Color(0xFFE2E8F0);
+  static const BorderError = Color(0xFFF04438);
+  static const BorderFocus = Color(0xFF53B27F);
+  static const BgInputFocus = Color(0xFFF5FFFA);
+  static const BgInputDisable = Color(0xFFE2E8F0);
+  static const BgDialogOverlay = Color(0x00160B7A);
+  static const BgSecondarySubtle = Color(0xFFF7FAFC);
+}

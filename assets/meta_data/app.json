@@ -1,0 +1,60 @@
+[
+  {
+    "android": {
+      "applicationId": "com.zing.zalo",
+      "mainClass": "com.zing.zalo.ui.SplashActivity",
+      "schema": "zalo://start",
+      "storeLink": "https://play.google.com/store/apps/details?id=com.zing.zalo"
+    },
+    "ios": {
+      "storeLink": "itms-apps://itunes.apple.com/vn/app/zalo/id579523206",
+      "schema": "zalo://start"
+    },
+    "name": "Zalo",
+    "icon": "https://play-lh.googleusercontent.com/rFIOt4fDSCgJh_FkHU2qP8YiZUUhfVoKoNfQFbPEM-Wl8zuyuwn7vzkEx_XMh5B6FfO3=w480-h960-rw",
+    "description": "Ứng dụng liên lạc đảm bảo kết nối nhanh, ổn định, tiện lợi và riêng tư cho người dùng mọi lúc, mọi nơi."
+  },
+  {
+    "android": {
+      "applicationId": "org.telegram.messenger",
+      "mainClass": "org.telegram.ui.LaunchActivity",
+      "schema": "tg://",
+      "storeLink": "https://play.google.com/store/apps/details?id=org.telegram.messenger"
+    },
+    "ios": {
+      "storeLink": "itms-apps://itunes.apple.com/vn/app/telegram-messenger/id686449807",
+      "schema": "tg://"
+    },
+    "name": "Telegram",
+    "icon": "https://play-lh.googleusercontent.com/ZU9cSsyIJZo6Oy7HTHiEPwZg0m2Crep-d5ZrfajqtsH-qgUXSqKpNA2FpPDTn-7qA5Q=w480-h960-rw",
+    "description": "Nhắn tin tức thời thuần túy — đơn giản, nhanh chóng, an toàn và được đồng bộ hóa trên tất cả các thiết bị của bạn. Một trong 5 ứng dụng được tải xuống nhiều nhất trên thế giới với hơn 950 triệu người dùng hoạt động."
+  },
+  {
+    "android": {
+      "applicationId": "vn.com.citizen",
+      "mainClass": "vn.com.ngs.citizens.MainActivity",
+      "storeLink": "https://play.google.com/store/apps/details?id=vn.com.citizen"
+    },
+    "ios": {
+      "storeLink": "itms-apps://itunes.apple.com/vn/app/smart-haiduong/id6476646701",
+      "schema": ""
+    },
+    "name": "Smart-HaiDuong",
+    "icon": "https://play-lh.googleusercontent.com/A2Ffq3nE8fiAJtlu0l9xFghptdDwDVtghc67RsBJBKzzc9-dzn7tr7D2ruw1bKLvcyY=w480-h960-rw",
+    "description": "Ứng dụng Smart Hải Dương đem lại trải nghiệm toàn diện cho người dân tỉnh Hải Dương"
+  },
+  {
+    "android": {
+      "applicationId": "com.viettel.vpmt.vofficenew",
+      "mainClass": "com.viettel.vpmt.vofficenew.MainActivity",
+      "storeLink": "https://play.google.com/store/apps/details?id=com.viettel.vpmt.vofficenew"
+    },
+    "ios": {
+      "storeLink": "itms-apps://itunes.apple.com/vn/app/voffice-2-0-for-iphone/id1449234357",
+      "schema": ""
+    },
+    "name": "VOffice",
+    "icon": "https://play-lh.googleusercontent.com/hXI-xiraVieLW2sJlvWlcpOOUhMwLuSijdAoGXKgR8y3Sm4SIpRw_ynos7gQqLf-2w=w480-h960-rw",
+    "description": "VOffice 2.0 là sản phẩm được triển khai cho hệ thống văn phòng của các ban ngành thuộc nhiều công ty và các tỉnh thành trong cả nước"
+  }
+]

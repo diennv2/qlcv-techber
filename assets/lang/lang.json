@@ -1,0 +1,12 @@
+[
+  {
+    "country": "Việt Nam",
+    "locale": "vi",
+    "flag": "assets/images/flag/vn.png"
+  },
+  {
+    "country": "English",
+    "locale": "en",
+    "flag": "assets/images/flag/en.png"
+  }
+]

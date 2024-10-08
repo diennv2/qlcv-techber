@@ -1,0 +1,86 @@
+[
+  {
+    "permission": "phongban/index",
+    "description": "Xem danh sách phòng ban"
+  },
+  {
+    "permission": "loaiduan/index",
+    "description": "Xem danh sách loại công việc chính"
+  },
+  {
+    "permission": "admin/index",
+    "description": "Xem danh sách người dùng"
+  },
+  {
+    "permission": "duan/index",
+    "description": "Xem danh sách công việc chính phụ trách / có liên quan / phối hợp"
+  },
+  {
+    "permission": "duan/create",
+    "description": "Tạo công việc chính"
+  },
+  {
+    "permission": "duan/update",
+    "description": "Sửa công việc chính"
+  },
+  {
+    "permission": "duan/delete",
+    "description": "Xóa công việc chính"
+  },
+  {
+    "permission": "duan/view",
+    "description": "Xem chi tiết công việc chính"
+  },
+  {
+    "permission": "duan/xemtatca",
+    "description": "Xem tất cả công việc chính"
+  },
+  {
+    "permission": "congviec/index",
+    "description": "Xem danh sách công việc chi tiết thuộc công việc chính"
+  },
+  {
+    "permission": "congviec/create",
+    "description": "Tạo công việc chi tiết"
+  },
+  {
+    "permission": "congviec/update",
+    "description": "Sửa công việc chi tiết"
+  },
+  {
+    "permission": "congviec/delete",
+    "description": "Xóa công việc chi tiết"
+  },
+  {
+    "permission": "congviec/view",
+    "description": "Xem chi tiết công việc chi tiết"
+  },
+  {
+    "permission": "congviec/deletefile",
+    "description": "Xóa file đính kèm công việc chi tiết"
+  },
+  {
+    "permission": "baocaocongviec/index",
+    "description": "Xem danh sách báo cáo công việc chi tiết"
+  },
+  {
+    "permission": "baocaocongviec/create",
+    "description": "Tạo báo cáo công việc chi tiết"
+  },
+  {
+    "permission": "baocaocongviec/update",
+    "description": "Sửa báo cáo công việc chi tiết"
+  },
+  {
+    "permission": "baocaocongviec/delete",
+    "description": "Xóa báo cáo công việc chi tiết"
+  },
+  {
+    "permission": "danhgiabaocao/index",
+    "description": "Xem danh sách đánh giá báo cáo công việc chi tiết"
+  },
+  {
+    "permission": "danhgiabaocao/create",
+    "description": "Đánh giá báo cáo công việc chi tiết"
+  }
+]
