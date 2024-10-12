@@ -5,6 +5,7 @@ import 'package:mobile_rhm/core/utils/log_utils.dart';
 import 'package:mobile_rhm/data/model/common/opttion_model.dart';
 import 'package:mobile_rhm/data/model/common/task_filter.dart';
 import 'package:mobile_rhm/data/model/response/meta/domain.dart';
+import 'package:mobile_rhm/data/model/response/task/co_quan.dart';
 import 'package:mobile_rhm/data/model/response/task/employee.dart';
 import 'package:mobile_rhm/data/model/response/task/lanh_dao.dart';
 import 'package:mobile_rhm/data/model/response/task/phong_ban.dart';
@@ -21,7 +22,9 @@ class MetadataService extends GetxService implements MetadataHelper {
   List<DomainModel> domains = [];
   List<PhongBan> phongBans = [];
   List<LanhDao> lanhDaos = [];
+  List<CoQuan> coQuans = [];
   List<TypeOfWork> typeOfWorks = [];
+  List<TypeOfWork> typeOfWorksPlan = [];
   List<Employee> allEmployee = [];
   Map<String, List<Employee>> employeeByDepartment = {};
   List<TaskFilter> taskFilters = [];
@@ -34,7 +37,7 @@ class MetadataService extends GetxService implements MetadataHelper {
   }
 
   Future<void> initData() async {
-    await Future.wait([getPhongBan(), getLoaiCongViec(), getLanhDao(), getEmployee()]);
+    await Future.wait([getPhongBan(), getLoaiCongViec(), getLanhDao(), getEmployee(), getLoaiCongViecKeHoach()]);
     getTaskFilters();
   }
 
@@ -200,6 +203,22 @@ class MetadataService extends GetxService implements MetadataHelper {
   }
 
   @override
+  Future<List<TypeOfWork>?> getLoaiCongViecKeHoach() async {
+    if (typeOfWorksPlan.isEmpty) {
+      try {
+        var res = await _repositoryManager.getLoaiCongViecKeHoach();
+        if (res != null) {
+          typeOfWorksPlan.clear();
+          typeOfWorksPlan.addAll(res);
+        }
+      } catch (e) {
+        LogUtils.logE(message: 'getLanhDao ${e.toString()}');
+      }
+    }
+    return typeOfWorksPlan;
+  }
+
+  @override
   void logout() {
     phongBans.clear();
     lanhDaos.clear();
@@ -237,6 +256,22 @@ class MetadataService extends GetxService implements MetadataHelper {
       LogUtils.logE(message: 'getEmployeeAndDep error cause ${e.toString()} ');
     }
     return null;
+  }
+
+  @override
+  Future<List<CoQuan>?> getCoQuan() async {
+    if (coQuans.isEmpty) {
+      try {
+        var res = await _repositoryManager.getCoQuan();
+        if (res != null) {
+          coQuans.clear();
+          coQuans.addAll(res);
+        }
+      } catch (e) {
+        LogUtils.logE(message: 'getCoQuan ${e.toString()}');
+      }
+    }
+    return coQuans;
   }
 
   @override

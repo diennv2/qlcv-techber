@@ -9,6 +9,9 @@ abstract class TaskServiceHelper {
   Future<TasksResponse?> getTasksByFilter(
       {int? page, String? phongbanid, String? statusFilter, String? tenFilter, String? loaiduanFilter, String? nguoinhanviecFilter});
 
+  Future<TasksResponse?> getPlansByFilter(
+      {int? page, String? phongbanid, String? statusFilter, String? tenFilter, String? loaiduanFilter, String? nguoinhanviecFilter});
+
   Future<SubTaskListResponse?> getSubTaskList({required String congviec_id, String? statusFilter, String? tenFilter, int? page});
 
   Future<List<SubTaskProgressResponse>?> getSubTasksProgress({required List<num> ids});

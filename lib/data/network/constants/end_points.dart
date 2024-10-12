@@ -15,6 +15,7 @@ class ApiEndpoint {
   static const String PHONG_BAN_LIST = "@domain/api/getall_phongban.html";
   static const String LOAI_CONG_VIEC_LIST = "@domain/api/getall_loaicongviec.html";
   static const String LANH_DAO_LIST = "@domain/api/getall_lanhdao.html";
+  static const String CO_QUAN_LIST = "@domain/api/getall_coquan.html";
   static const String EMPLOYEE_LIST = "@domain/api/getall_user.html";
   static const String EMPLOYEE_OF_DEP_LIST = "@domain/api/getnhanvien_phongban.html";
   static const String SUBTASK_LIST = "@domain/api/getcongviec_listjob.html";
@@ -26,6 +27,8 @@ class ApiEndpoint {
   static const String DELETE_FILE_SUB_TASK = "@domain/api/jobdetails_deletefile.html";
   static const String UPDATE_TASK_STATUS = "@domain/api/congviec_update_status.html";
 
+  static const String PLAN_LIST = "@domain/api/getall_task_kehoach.html";
+  static const String LOAI_CONG_VIEC_PLAN_LIST = "@domain/api/getall_loaicongviec_kehoach.html";
   //Comment
   static const String TASK_COMMENT_LIST = "@domain/api/congviec_getall_comment.html";
   static const String TASK_COMMENT_NEW = "@domain/api/congviec_comment.html";

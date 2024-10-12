@@ -82,5 +82,29 @@
   {
     "permission": "danhgiabaocao/create",
     "description": "Đánh giá báo cáo công việc chi tiết"
+  },
+  {
+    "permission": "duan/kehoach",
+    "description": "Xem danh sách kế hoạch"
+  },
+  {
+    "permission": "duan/createkehoach",
+    "description": "Tạo kế hoạch"
+  },
+  {
+    "permission": "kehoach/update",
+    "description": "Sửa kế hoạch"
+  },
+  {
+    "permission": "kehoach/delete",
+    "description": "Xóa kế hoạch"
+  },
+  {
+    "permission": "kehoach/view",
+    "description": "Xem chi tiết kế hoạch"
+  },
+  {
+    "permission": "kehoach/xemtatca",
+    "description": "Xem tất cả kế hoạch"
   }
 ]

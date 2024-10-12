@@ -50,6 +50,8 @@ class SubTaskDetail {
   List<Nguoiphoihop>? nguoiphoihop;
   num? congviecchinhId;
   List<String>? filedinhkem;
+  num? coquan;
+  String? coquanname;
 
   SubTaskDetail(
       {this.id,
@@ -64,6 +66,8 @@ class SubTaskDetail {
       this.ngayhoanthanh,
       this.isExpired,
       this.nguoiphoihop,
+      this.coquan,
+      this.coquanname,
       this.congviecchinhId});
 
   SubTaskDetail.fromJson(Map<String, dynamic> json) {
@@ -108,6 +112,8 @@ class SubTaskDetail {
     }
     data['congviecchinh_id'] = this.congviecchinhId;
     data['filedinhkem'] = this.filedinhkem;
+    data['coquan'] = this.coquan;
+    data['coquanname'] = this.coquanname;
     return data;
   }
 }

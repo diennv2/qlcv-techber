@@ -3,6 +3,7 @@ import 'package:mobile_rhm/core/utils/dio_error_util.dart';
 import 'package:mobile_rhm/core/utils/log_utils.dart';
 import 'package:mobile_rhm/data/model/response/meta/domain.dart';
 import 'package:mobile_rhm/data/model/response/notification/notification.dart';
+import 'package:mobile_rhm/data/model/response/task/co_quan.dart';
 import 'package:mobile_rhm/data/model/response/task/commment_list.dart';
 import 'package:mobile_rhm/data/model/response/task/employee.dart';
 import 'package:mobile_rhm/data/model/response/task/lanh_dao.dart';
@@ -94,7 +95,28 @@ class AppApiHelper implements ApiHelper {
     }
     return null;
   }
-
+  @override
+  Future<TasksResponse?> getPlansByFilter(
+      {int? page, String? phongbanid, String? statusFilter, String? tenFilter, String? loaiduanFilter, String? nguoinhanviecFilter}) async {
+    try {
+      var body = {
+        "page": page ?? 1,
+        "phongbanid": phongbanid ?? '',
+        "statusFilter": statusFilter ?? '',
+        "tenFilter": tenFilter ?? '',
+        "loaiduanFilter": loaiduanFilter ?? '',
+        "nguoinhanviecFilter": nguoinhanviecFilter ?? ''
+      };
+      Response response = await _dioClient.post(ApiEndpoint.PLAN_LIST, data: body);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return TasksResponse.fromJson(response.data);
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      handleError(err);
+    }
+    return null;
+  }
   @override
   Future<List<PhongBan>?> getPhongBan() async {
     try {
@@ -136,11 +158,51 @@ class AppApiHelper implements ApiHelper {
   }
 
   @override
+  Future<List<CoQuan>?> getCoQuan() async {
+    try {
+      var body = {};
+      List<CoQuan> res = [];
+      Response response = await _dioClient.post(ApiEndpoint.CO_QUAN_LIST, data: body);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        for (var item in response.data) {
+          CoQuan pb = CoQuan.fromJson(item);
+          res.add(pb);
+        }
+        return res;
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      handleError(err);
+    }
+    return null;
+  }
+
+  @override
   Future<List<TypeOfWork>?> getLoaiCongViec() async {
     try {
       var body = {};
       List<TypeOfWork> res = [];
       Response response = await _dioClient.post(ApiEndpoint.LOAI_CONG_VIEC_LIST, data: body);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        for (var item in response.data) {
+          TypeOfWork pb = TypeOfWork.fromJson(item);
+          res.add(pb);
+        }
+        return res;
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      handleError(err);
+    }
+    return null;
+  }
+
+  @override
+  Future<List<TypeOfWork>?> getLoaiCongViecKeHoach() async {
+    try {
+      var body = {};
+      List<TypeOfWork> res = [];
+      Response response = await _dioClient.post(ApiEndpoint.LOAI_CONG_VIEC_PLAN_LIST, data: body);
       if (response.statusCode == ServerStatus.SUCCESS) {
         for (var item in response.data) {
           TypeOfWork pb = TypeOfWork.fromJson(item);

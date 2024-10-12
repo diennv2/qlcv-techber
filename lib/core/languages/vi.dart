@@ -96,8 +96,9 @@ const Map<String, String> vi = {
 
   //Tab
   AppStrings.tab_home: 'Công việc',
-  AppStrings.tab_calendar: 'Lịch',
+  AppStrings.tab_plan: 'Kế hoạch',
   AppStrings.tab_application: 'Ứng dụng',
+
 
   //Task status
   AppStrings.task_all: 'Tất cả',
@@ -190,6 +191,7 @@ const Map<String, String> vi = {
   AppStrings.subtask_add_employee: 'Thêm người phối hợp',
   AppStrings.subtask_assign_date: 'Ngày giao việc',
   AppStrings.subtask_assign_date_hint: 'Chọn ngày giao việc',
+  AppStrings.subtask_head_office_hint: 'Chọn cơ quan ban hành',
   AppStrings.task_content: 'Nội dung công việc',
   AppStrings.confirm_delete_file: 'Bạn có chắc chắn muốn xoá tài liệu đính kèm ?',
   AppStrings.delete_file_success: 'Xoá tài liệu đính kèm thành công',

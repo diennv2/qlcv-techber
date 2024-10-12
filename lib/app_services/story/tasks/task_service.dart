@@ -40,6 +40,24 @@ class TaskService extends GetxService with TaskServiceHelper {
   }
 
   @override
+  Future<TasksResponse?> getPlansByFilter(
+      {int? page, String? phongbanid, String? statusFilter, String? tenFilter, String? loaiduanFilter, String? nguoinhanviecFilter}) async {
+    try {
+      TasksResponse? res = await _repositoryManager.getPlansByFilter(
+          page: page,
+          phongbanid: phongbanid,
+          statusFilter: statusFilter,
+          tenFilter: tenFilter,
+          loaiduanFilter: loaiduanFilter,
+          nguoinhanviecFilter: nguoinhanviecFilter);
+      return res;
+    } catch (e) {
+      LogUtils.logE(message: '#getPlansByFilter error cause ${e.toString()}');
+    }
+    return null;
+  }
+
+  @override
   Future<SubTaskListResponse?> getSubTaskList({required String congviec_id, String? statusFilter, String? tenFilter, int? page}) async {
     try {
       SubTaskListResponse? res =

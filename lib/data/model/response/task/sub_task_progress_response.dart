@@ -14,6 +14,8 @@ class SubTaskProgressResponse {
   bool? isExpired;
   List<Nguoiphoihop>? nguoiphoihop;
   num? congviecchinhId;
+  num? coquan;
+  String? coquanname;
   num? soluongbaocao;
   List<Baocaocongviec>? baocaocongviec;
   List<String>? filedinhkem;
@@ -31,6 +33,8 @@ class SubTaskProgressResponse {
       this.isExpired,
       this.nguoiphoihop,
       this.congviecchinhId,
+      this.coquan,
+      this.coquanname,
       this.soluongbaocao,
       this.baocaocongviec});
 
@@ -52,6 +56,8 @@ class SubTaskProgressResponse {
       });
     }
     congviecchinhId = json['congviecchinh_id'];
+    coquan = json['coquan'];
+    coquanname = json['coquan_name'];
     soluongbaocao = json['soluongbaocao'];
     if (json['baocaocongviec'] != null) {
       baocaocongviec = <Baocaocongviec>[];

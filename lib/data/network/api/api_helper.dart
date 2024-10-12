@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:mobile_rhm/data/model/response/meta/domain.dart';
 import 'package:mobile_rhm/data/model/response/notification/notification.dart';
+import 'package:mobile_rhm/data/model/response/task/co_quan.dart';
 import 'package:mobile_rhm/data/model/response/task/commment_list.dart';
 import 'package:mobile_rhm/data/model/response/task/employee.dart';
 import 'package:mobile_rhm/data/model/response/task/lanh_dao.dart';
@@ -21,11 +22,18 @@ abstract class ApiHelper {
   Future<TasksResponse?> getTasksByFilter(
       {int? page, String? phongbanid, String? statusFilter, String? tenFilter, String? loaiduanFilter, String? nguoinhanviecFilter});
 
+  Future<TasksResponse?> getPlansByFilter(
+      {int? page, String? phongbanid, String? statusFilter, String? tenFilter, String? loaiduanFilter, String? nguoinhanviecFilter});
+
   Future<List<PhongBan>?> getPhongBan();
 
   Future<List<LanhDao>?> getLanhDao();
 
+  Future<List<CoQuan>?> getCoQuan();
+
   Future<List<TypeOfWork>?> getLoaiCongViec();
+
+  Future<List<TypeOfWork>?> getLoaiCongViecKeHoach();
 
   Future<List<Employee>?> getEmployee();
 

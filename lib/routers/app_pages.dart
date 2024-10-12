@@ -19,6 +19,8 @@ import 'package:mobile_rhm/screens/subtask/create_sub_task_binding.dart';
 import 'package:mobile_rhm/screens/subtask/create_sub_task_view.dart';
 import 'package:mobile_rhm/screens/task/create/create_new_task_binding.dart';
 import 'package:mobile_rhm/screens/task/create/create_new_task_view.dart';
+import 'package:mobile_rhm/screens/task/createplan/create_new_plan_binding.dart';
+import 'package:mobile_rhm/screens/task/createplan/create_new_plan_view.dart';
 import 'package:mobile_rhm/screens/task/department/select_employee_binding.dart';
 import 'package:mobile_rhm/screens/task/department/select_employee_view.dart';
 import 'package:mobile_rhm/screens/task/detail/task_detail_binding.dart';
@@ -44,6 +46,8 @@ class AppPages {
     GetPage(name: Routers.TASK_NEW, page: () => CreateNewTaskPage(), binding: CreateNewTaskBinding()),
     GetPage(name: Routers.TASK_SELECT_STAFF, page: () => SelectEmployeePage(), binding: SelectEmployeeBinding()),
 
+    //Plan
+    GetPage(name: Routers.PLAN_NEW, page: () => CreateNewPlanPage(), binding: CreateNewPlanBinding()),
     //SubTask
     GetPage(name: Routers.SUB_TASK_NEW, page: () => CreateSubTaskPage(), binding: CreateSubTaskBinding()),
 

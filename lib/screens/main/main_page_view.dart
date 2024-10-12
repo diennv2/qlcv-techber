@@ -8,6 +8,7 @@ import 'package:mobile_rhm/core/theme/text_theme.dart';
 import 'package:mobile_rhm/core/values/colors.dart';
 import 'package:mobile_rhm/screens/main/apps/application_view.dart';
 import 'package:mobile_rhm/screens/main/home/home_view.dart';
+import 'package:mobile_rhm/screens/main/plan/plan_view.dart';
 
 import 'main_page_logic.dart';
 
@@ -35,29 +36,51 @@ class _MainPagePageState extends State<MainPagePage> {
       key: _scaffoldKey,
       backgroundColor: AppColors.White,
       floatingActionButton: Obx(() {
-        if (state.currentPage.value != TabConst.TAB_HOME) {
-          return const SizedBox.shrink();
+        if (state.currentPage.value == TabConst.TAB_HOME) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: state.isFabExpanded.value ? state.bottomBarHeight : 0),
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: FloatingActionButton.extended(
+                  onPressed: () {
+                    logic.createNewTask();
+                  },
+                  label: state.isFabExpanded.value
+                      ? Text(
+                    AppStrings.btn_new.tr,
+                    style: AppTextStyle.regular_12,
+                  )
+                      : const Icon(
+                    Icons.add,
+                    size: 25,
+                  )),
+            ),
+          );
         }
-        return Padding(
-          padding: EdgeInsets.only(bottom: state.isFabExpanded.value ? state.bottomBarHeight : 0),
-          child: AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            child: FloatingActionButton.extended(
-                onPressed: () {
-                  logic.createNewTask();
-                },
-                label: state.isFabExpanded.value
-                    ? Text(
-                        AppStrings.btn_new.tr,
-                        style: AppTextStyle.regular_12,
-                      )
-                    : const Icon(
-                        Icons.add,
-                        size: 25,
-                      )),
-          ),
-        );
+        if (state.currentPage.value == TabConst.TAB_PLAN) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: state.isFabExpanded.value ? state.bottomBarHeight : 0),
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: FloatingActionButton.extended(
+                  onPressed: () {
+                    logic.createNewPlan();
+                  },
+                  label: state.isFabExpanded.value
+                      ? Text(
+                    AppStrings.btn_new.tr,
+                    style: AppTextStyle.regular_12,
+                  )
+                      : const Icon(
+                    Icons.add,
+                    size: 25,
+                  )),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
       }),
       drawer: const SidebarDrawer(),
       body: Stack(
@@ -70,10 +93,13 @@ class _MainPagePageState extends State<MainPagePage> {
                 index: state.currentPage.value,
                 children: [
                   HomePage(
-                    scrollController: logic.scrollController,
+                    scrollController: logic.scrollController1,
                     globalKey: _scaffoldKey,
                   ),
-                  // Container(),
+                  PlanPage(
+                    scrollController: logic.scrollController2,
+                    globalKey: _scaffoldKey,
+                  ),
                   ApplicationPage()
                 ],
               );
@@ -100,6 +126,7 @@ class _MainPagePageState extends State<MainPagePage> {
   @override
   void dispose() {
     super.dispose();
-    logic.scrollController.dispose();
+    logic.scrollController1.dispose();
+    logic.scrollController2.dispose();
   }
 }

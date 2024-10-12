@@ -20,6 +20,10 @@ class Routers {
   static const TASK_NEW = '/task_new';
   static const TASK_SELECT_STAFF = '/select_staff';
 
+  //Task detail
+  static const PLAN_NEW = '/plan_new';
+
+
   //Sub Task
   static const SUB_TASK_NEW = '/sub_task_new';
 

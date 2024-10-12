@@ -130,6 +130,12 @@ class SubTaskItemView extends StatelessWidget {
               children: [
                 TaskKeyValueView(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  icon: Icons.home_work_outlined,
+                  value: detail?.coquanname ?? 'Chưa gán',
+                  name: AppStrings.subtask_head_office.tr,
+                ),
+                TaskKeyValueView(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   icon: Icons.calendar_month,
                   value: detail?.ngaygiao ?? '',
                   name: AppStrings.subtask_assign_date.tr,

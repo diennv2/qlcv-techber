@@ -2,6 +2,7 @@ import 'package:dio/src/form_data.dart';
 import 'package:mobile_rhm/data/local/database_helper.dart';
 import 'package:mobile_rhm/data/model/response/meta/domain.dart';
 import 'package:mobile_rhm/data/model/response/notification/notification.dart';
+import 'package:mobile_rhm/data/model/response/task/co_quan.dart';
 import 'package:mobile_rhm/data/model/response/task/commment_list.dart';
 import 'package:mobile_rhm/data/model/response/task/employee.dart';
 import 'package:mobile_rhm/data/model/response/task/lanh_dao.dart';
@@ -106,6 +107,18 @@ class AppRepositoryManager extends RepositoryManager {
   }
 
   @override
+  Future<TasksResponse?> getPlansByFilter(
+      {int? page, String? phongbanid, String? statusFilter, String? tenFilter, String? loaiduanFilter, String? nguoinhanviecFilter}) {
+    return _apiHelper.getPlansByFilter(
+        page: page,
+        phongbanid: phongbanid,
+        statusFilter: statusFilter,
+        tenFilter: tenFilter,
+        loaiduanFilter: loaiduanFilter,
+        nguoinhanviecFilter: nguoinhanviecFilter);
+  }
+
+  @override
   Future<List<PhongBan>?> getPhongBan() {
     return _apiHelper.getPhongBan();
   }
@@ -116,8 +129,18 @@ class AppRepositoryManager extends RepositoryManager {
   }
 
   @override
+  Future<List<CoQuan>?> getCoQuan() {
+    return _apiHelper.getCoQuan();
+  }
+
+  @override
   Future<List<TypeOfWork>?> getLoaiCongViec() {
     return _apiHelper.getLoaiCongViec();
+  }
+
+  @override
+  Future<List<TypeOfWork>?> getLoaiCongViecKeHoach() {
+    return _apiHelper.getLoaiCongViecKeHoach();
   }
 
   @override

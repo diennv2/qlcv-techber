@@ -102,6 +102,7 @@ abstract class AppStrings {
   static const String tab_home = 'tab_home';
   static const String tab_calendar = 'tab_calendar';
   static const String tab_application = 'tab_application';
+  static const String tab_plan = 'tab_plan';
 
   //Task status
   static const String task_all = 'task_all';
@@ -194,7 +195,9 @@ abstract class AppStrings {
   static const String subtask_update_title = 'subtask_update_title';
   static const String subtask_add_employee = 'subtask_add_employee';
   static const String subtask_assign_date = 'subtask_assign_date';
+  static const String subtask_head_office = 'subtask_head_office';
   static const String subtask_assign_date_hint = 'subtask_assign_date_hint';
+  static const String subtask_head_office_hint = 'subtask_head_office_hint';
   static const String task_content = 'task_content';
   static const String confirm_delete_file = 'confirm_delete_file';
   static const String delete_file_success = 'delete_file_success';

@@ -67,6 +67,18 @@ class CreateSubTaskPage extends StatelessWidget {
                 maxLines: null,
                 height: 120.h,
               ),
+              Obx(() {
+                return DropDownView(
+                    label: AppStrings.subtask_head_office.tr,
+                    hint: AppStrings.subtask_head_office_hint.tr,
+                    value: state.coQuanSelect.value,
+                    onPress: () async {
+                      logic.selectCoQuan();
+                    });
+              }),
+              SizedBox(
+                height: 20.h,
+              ),
               SizedBox(
                 height: 20.h,
               ),

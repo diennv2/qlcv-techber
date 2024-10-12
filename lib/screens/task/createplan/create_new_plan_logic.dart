@@ -1,17 +1,19 @@
 import 'package:dio/dio.dart' as Dio;
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:group_button/group_button.dart';
 import 'package:intl/intl.dart';
-import 'package:mobile_rhm/app_services/story/permisson/permisson_list.dart';
 import 'package:mobile_rhm/app_services/story/rhm_service.dart';
 import 'package:mobile_rhm/app_widgets/date_timer_picker.dart';
 import 'package:mobile_rhm/app_widgets/image_display.dart';
 import 'package:mobile_rhm/app_widgets/warning_view.dart';
 import 'package:mobile_rhm/core/constants/file_type.dart';
+import 'package:mobile_rhm/core/constants/qltc.dart';
+import 'package:mobile_rhm/core/constants/roles.dart';
 import 'package:mobile_rhm/core/constants/task.dart';
+import 'package:mobile_rhm/core/constants/task_important.dart';
 import 'package:mobile_rhm/core/extentions/string.dart';
 import 'package:mobile_rhm/core/languages/keys.dart';
 import 'package:mobile_rhm/core/utils/dialog_utils.dart';
@@ -20,22 +22,25 @@ import 'package:mobile_rhm/core/utils/navigation_utils.dart';
 import 'package:mobile_rhm/core/values/assets.dart';
 import 'package:mobile_rhm/data/model/common/opttion_model.dart';
 import 'package:mobile_rhm/data/model/response/task/employee.dart';
-import 'package:mobile_rhm/data/model/response/task/nguoi_phoi_hop.dart';
+import 'package:mobile_rhm/data/model/response/task/nguoi_nhan_viec.dart';
 import 'package:mobile_rhm/data/model/response/task/phong_ban.dart';
 import 'package:mobile_rhm/data/model/response/user/me/UserProfile.dart';
 import 'package:mobile_rhm/routers/app_pages.dart';
 
-import 'create_sub_task_state.dart';
+import 'create_new_plan_state.dart';
 
-class CreateSubTaskLogic extends GetxController {
-  final CreateSubTaskState state = CreateSubTaskState();
-
+class CreateNewPlanLogic extends GetxController {
+  final CreateNewPlanState state = CreateNewPlanState();
   final RHMService _rhmService = Get.find<RHMService>();
 
   final TextEditingController taskNameController = TextEditingController();
   final TextEditingController taskInfoController = TextEditingController();
 
   final GroupButtonController groupTaskStatusController = GroupButtonController();
+  final GroupButtonController groupTypeWorkController = GroupButtonController();
+  final GroupButtonController groupLanhDaoController = GroupButtonController();
+  final GroupButtonController groupFinanceController = GroupButtonController();
+  final GroupButtonController groupImportantController = GroupButtonController();
 
   @override
   void onInit() {
@@ -57,38 +62,79 @@ class CreateSubTaskLogic extends GetxController {
   _initData() {
     //TODO: init cause Update
     if (state.task != null) {
-      taskNameController.text = state.task?.tencongviec ?? '';
-      taskInfoController.text = state.task?.motacongviec ?? '';
+      taskNameController.text = state.task?.ten ?? '';
+      taskInfoController.text = state.task?.mota ?? '';
     }
 
     taskNameController.addListener(() {
       state.errorTaskName.value = '';
     });
 
+    _rhmService.metadataService.getLanhDao().then((value) {
+      if (value != null) {
+        state.lanhDaos.value = value.map((e) => OptionModel(key: '${e.id}', value: e.ten ?? '')).toList();
+        //TODO: Init lanh dao selected
+        if (state.task != null) {
+          for (var lanhdao in (state.task?.lanhdaophutrachList ?? [])) {
+            state.selectedLanhDaos.add(OptionModel(key: '${lanhdao.id}', value: lanhdao.ten ?? ''));
+            int index = state.lanhDaos.indexWhere((ld) => ld.key == '${lanhdao.id}');
+            groupLanhDaoController.selectIndex(index);
+          }
+        }
+      }
+    });
+
+    _rhmService.metadataService.getLoaiCongViecKeHoach().then((value) {
+      if (value != null) {
+        state.typeOfWorksPlan.value = value.map((e) => OptionModel(key: '${e.id}', value: e.tenloai ?? '')).toList();
+        if (state.task != null) {
+          LogUtils.logE(message: 'Find ${state.task!.loaiduanId}');
+          state.selectedTypeOfWorkPlan = OptionModel(key: '${state.task!.loaiduanId}', value: state.task!.loaiduanName);
+          int index = state.typeOfWorksPlan.indexWhere((element) => element.key == '${state.task!.loaiduanId}');
+          LogUtils.logE(message: 'Index to find = $index');
+          groupTypeWorkController.selectIndex(index);
+        } else {
+          state.selectedTypeOfWorkPlan = OptionModel(key: '${value.first.id}', value: value.first.tenloai ?? '');
+          groupTypeWorkController.selectIndex(0);
+        }
+      }
+    });
+
     state.statusOfWorks.value = TaskStatus.TASK_CREATE_FILTER;
+    state.typeOfFinances.value = FinanceTask.TASK_FILTER;
+    state.typeOfImportants.value = ImportantTask.TASK_FILTER;
 
     if (state.task != null) {
+      state.selectedFinance = FinanceTask.TASK_FILTER.last;
       state.selectedStatusOfWork = TaskStatus.TASK_CREATE_FILTER.firstWhere((element) => element.key == '${state.task!.status}');
+      state.selectedImportant = state.task!.isImportant == true ? ImportantTask.TASK_FILTER.first : ImportantTask.TASK_FILTER.last;
+
       groupTaskStatusController.selectIndex(TaskStatus.TASK_CREATE_FILTER.indexWhere((element) => element.key == state.selectedStatusOfWork?.key));
+      groupFinanceController.selectIndex(1);
+      groupImportantController.selectIndex(state.task!.isImportant == true ? 0 : 1);
     } else {
+      state.selectedFinance = FinanceTask.TASK_FILTER.last;
       state.selectedStatusOfWork = TaskStatus.TASK_CREATE_FILTER.first;
+      state.selectedImportant = ImportantTask.TASK_FILTER.last;
+
       groupTaskStatusController.selectIndex(0);
+      groupFinanceController.selectIndex(1);
+      groupImportantController.selectIndex(1);
     }
 
     //TODO: init start time and endtime
     if (state.task != null) {
-      String? startTime = state.task?.ngaygiao;
-      if (startTime.isNotNullOrEmpty) {
+      String? startTime = state.task?.ngaybatdau;
+      if (startTime.isNotNullOrBlank) {
         LogUtils.logE(message: 'Start date $startTime');
-        DateTime? date = _convertTime(timeInString: startTime, formatDate: 'yyyy-MM-dd');
+        DateTime? date = _convertTime(timeInString: startTime);
         if (date != null) {
-          DateFormat originalFormat = DateFormat('dd/MM/yyyy');
           state.selectedStartDateTime.value = date;
-          state.dateTimeStartValue.value = originalFormat.format(date);
+          state.dateTimeStartValue.value = startTime!;
         }
       }
 
-      String? endTime = state.task?.ngayhoanthanh;
+      String? endTime = state.task?.deadline?.endDate;
       if (endTime.isNotNullOrBlank) {
         LogUtils.logE(message: 'End date $endTime');
         DateTime? date = _convertTime(timeInString: endTime, formatDate: 'yyyy-MM-dd');
@@ -101,24 +147,21 @@ class CreateSubTaskLogic extends GetxController {
     }
 
     _loadStaff();
-    _loadCoQuan();
 
     //TODO: Check CRUD
     if (state.task == null) {
       state.isAllowCRUD.value = true;
     } else {
       UserProfile? user = _rhmService.userService.getUserProfile();
-      if (_rhmService.metadataService.hasPermission(permission: user?.permission ?? [], checkPermisson: PermissonList.CONGVIEC_UPDATE)) {
+      if (user?.displayName?.toLowerCase() == UserRole.SUPER_ADMIN.toLowerCase() || user?.userId == state.task?.nguoiphutrachId) {
         state.isAllowCRUD.value = true;
-        if (state.task?.status == TaskStatus.COMPLETED || state.task?.status == TaskStatus.CANCELED) {
-          state.isAllowCRUD.value = false;
-        }
+      } else if (state.task?.status == TaskStatus.COMPLETED || state.task?.status == TaskStatus.CANCELED) {
+        state.isAllowCRUD.value = false;
       }
     }
   }
 
-  void updateEmployee(RxMap<String, List<Employee>> staffs, Nguoiphoihop updatedEmployee) {
-    LogUtils.logE(message: 'updateEmployee ${updatedEmployee.ten}');
+  void updateEmployee(RxMap<String, List<Employee>> staffs, Nguoinhanviec updatedEmployee) {
     bool employeeUpdated = false;
 
     // Duyệt qua tất cả các key trong RxMap
@@ -128,7 +171,7 @@ class CreateSubTaskLogic extends GetxController {
 
       if (index != -1) {
         // Thay thế nhân viên cũ bằng nhân viên đã cập nhật
-        employees[index].isSelect = true;
+        employees[index].taskRole.value = updatedEmployee.enumType == TaskRole.PRIMARY ? 0 : 1;
 
         // Cập nhật lại danh sách trong map
         staffs[key] = List<Employee>.from(employees);
@@ -148,60 +191,20 @@ class CreateSubTaskLogic extends GetxController {
       _rhmService.metadataService.getEmployeeAndDep(phongban_ids: state.phongBans.map((element) => "${element.id}").toList()).then((staff) {
         if (staff != null) {
           state.staffs.value = staff;
+          LogUtils.logE(message: 'Get staffs  OK');
           //TODO: Check staff
           if (state.task != null) {
-            for (Nguoiphoihop user in (state.task!.nguoiphoihop ?? [])) {
+            for (Nguoinhanviec user in (state.task!.nguoinhanviec ?? [])) {
               updateEmployee(state.staffs, user);
             }
           }
-          state.staffs.refresh();
         }
       });
     });
   }
 
-  void _loadCoQuan() async {
-    _rhmService.metadataService.getCoQuan().then((value) {
-      state.coQuan.value = value!;
-    });
-  }
-
-  void selectCoQuan() async {
-    // Ensure CoQuan data is loaded
-    if (state.coQuan.isEmpty) {
-      _loadCoQuan();  // Load data if not already loaded
-    }
-
-    // Create the bottom sheet widget for CoQuan selection
-    Widget coQuanPicker = Container(
-      padding: const EdgeInsets.all(16.0),
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 16),
-            // Display list of CoQuan options
-            ...state.coQuan.map((coQuan) {
-              return ListTile(
-                title: Text(coQuan.ten ?? 'Unknown'),  // Display CoQuan name
-                onTap: () {
-                  // Handle CoQuan selection
-                  state.coQuanSelect.value = coQuan.ten?? '';
-                  state.coQuanValue.value = coQuan.id?.toString() ?? '';
-                  print(coQuan.id?.toString());
-                  print(coQuan.ten);
-                  Get.back();  // Close the bottom sheet
-                },
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
-
-    // Show the bottom sheet with the CoQuan picker
-    await Get.bottomSheet(coQuanPicker);
+  void selectTaskType(OptionModel selected) {
+    state.selectedTaskType = selected;
   }
 
   void selectTaskStartTime() async {
@@ -213,7 +216,7 @@ class CreateSubTaskLogic extends GetxController {
         state.errorStartTime.value = '';
       },
       initDate: state.selectedStartDateTime.value,
-      title: AppStrings.subtask_assign_date.tr,
+      title: AppStrings.task_start_time.tr,
     );
     await Get.bottomSheet(datetimePick);
   }
@@ -251,19 +254,24 @@ class CreateSubTaskLogic extends GetxController {
     }
   }
 
-  void selectStatusOfWork(OptionModel selected) {
-    state.selectedStatusOfWork = selected;
-  }
-
   void onStaffChange({required Employee staff, required PhongBan dep}) {
     List<Employee> employees = state.staffs[dep.id.toString()] ?? [];
     for (Employee employee in employees) {
       if (employee.id == staff.id) {
-        employee.isSelect = staff.isSelect;
+        employee.taskRole = staff.taskRole;
         break;
       }
     }
     state.staffs.refresh();
+  }
+
+  void createNewOrUpdateTask() {
+    bool isValid = isFormValid();
+    if (isValid) {
+      confirmSubmitTask();
+    } else {
+      _rhmService.toastService.showToast(message: AppStrings.form_invalid_error.tr, isSuccess: false, context: Get.context!);
+    }
   }
 
   bool isFormValid() {
@@ -287,6 +295,38 @@ class CreateSubTaskLogic extends GetxController {
     return true;
   }
 
+  Map<String, String> _createStaffRequest() {
+    Map<String, String> staffMap = {};
+    state.staffs.forEach((key, employeeList) {
+      for (Employee employee in employeeList) {
+        if (employee.taskRole.value >= 0) {
+          String key = 'nhanvieninput[${employee.id}]';
+          String value = employee.taskRole.value == 0 ? TaskRole.PRIMARY : TaskRole.SECOND_PRIMARY;
+          staffMap[key] = value;
+        }
+      }
+    });
+    return staffMap;
+  }
+
+  List<num> _createPhongBanRequest() {
+    List<Employee> staffs = [];
+
+    // Thu thập tất cả các nhân viên có taskRole.value >= 0
+    state.staffs.forEach((key, employeeList) {
+      for (Employee employee in employeeList) {
+        if (employee.taskRole.value >= 0) {
+          staffs.add(employee);
+        }
+      }
+    });
+
+    // Chuyển đổi danh sách nhân viên thành danh sách phongbanId duy nhất
+    Set<num> phongBans = staffs.map((e) => e.phongbanId!).toSet();
+
+    return phongBans.toList();
+  }
+
   Future<List<Dio.MultipartFile>> _createFiles() async {
     List<Dio.MultipartFile> files = [];
     if (state.attachFiles.isNotEmpty) {
@@ -299,76 +339,45 @@ class CreateSubTaskLogic extends GetxController {
     return files;
   }
 
-  List<num> _createStaffRequest() {
-    List<num> staffIds = [];
-    state.staffs.forEach((key, employeeList) {
-      for (Employee employee in employeeList) {
-        if (employee.isSelect == true) {
-          // String key = 'nhanvieninput[${employee.id}]';
-          // String value = employee.taskRole.value == 0 ? TaskRole.PRIMARY : TaskRole.SECOND_PRIMARY;
-          // staffMap[key] = value;
-          staffIds.add(employee.id!);
-        }
-      }
-    });
-    return staffIds;
-  }
-
   void _submitTask() async {
     try {
       DialogUtils.showLoading();
-      List<num> staffIds = _createStaffRequest();
+      Map<String, String> staff = _createStaffRequest();
       DateFormat originalFormat = DateFormat('dd/MM/yyyy');
       DateFormat newFormat = DateFormat('yyyy-MM-dd');
 
       List<Dio.MultipartFile> files = await _createFiles();
-      var request;
-      if (state.task == null) {
-        request = {
-          'congviec_id': state.taskId,
-          'Congviec[tencongviec]': taskNameController.text,
-          'Congviec[motacongviec]': taskInfoController.text,
-          'Congviec[ngaygiao]':
-              state.dateTimeStartValue.value.isNotNullOrBlank ? newFormat.format(originalFormat.parse(state.dateTimeStartValue.value)) : '',
-          'Congviec[ngayhoanthanh]':
-              state.dateTimeEndValue.value.isNotNullOrBlank ? newFormat.format(originalFormat.parse(state.dateTimeEndValue.value)) : '',
-          'Congviec[status]': state.selectedStatusOfWork?.key,
-          'Congviec[coquan]': state.coQuanValue.value,
-          'fileinp[]': files,
-          'listnguoinhanphoihop[]': staffIds,
-        };
-      } else {
-        request = {
-          'id': state.task?.id,
-          'Congviec[tencongviec]': taskNameController.text,
-          'Congviec[motacongviec]': taskInfoController.text,
-          'Congviec[ngaygiao]':
-              state.dateTimeStartValue.value.isNotNullOrBlank ? newFormat.format(originalFormat.parse(state.dateTimeStartValue.value)) : '',
-          'Congviec[ngayhoanthanh]':
-              state.dateTimeEndValue.value.isNotNullOrBlank ? newFormat.format(originalFormat.parse(state.dateTimeEndValue.value)) : '',
-          'Congviec[status]': state.selectedStatusOfWork?.key,
-          'Congviec[coquan]': state.coQuanValue.value,
-          'fileinp[]': files,
-          'listnguoinhanphoihop[]': staffIds,
-        };
+      var request = {
+        'Duan[ten]': taskNameController.text,
+        'Duan[mota]': taskInfoController.text,
+        'listphutrach[]': state.selectedLanhDaos.map((option) => option.key).toList(),
+        'Duan[loaiduan_id]': state.selectedTypeOfWorkPlan?.key,
+        'Duan[ngaybatdau]':
+            state.dateTimeStartValue.value.isNotNullOrBlank ? newFormat.format(originalFormat.parse(state.dateTimeStartValue.value)) : '',
+        'Duan[deadline]': state.dateTimeEndValue.value.isNotNullOrBlank ? newFormat.format(originalFormat.parse(state.dateTimeEndValue.value)) : '',
+        'Duan[taichinh]': state.selectedFinance?.key,
+        'Duan[status]': state.selectedStatusOfWork?.key,
+        'Duan[tongdientich]': state.selectedImportant?.key,
+        'listphongban[]': _createPhongBanRequest(),
+        'fileinp[]': files,
+        ...staff
+      };
+      if (state.task != null) {
+        request['id'] = state.task!.id;
       }
 
       bool isCreateNew = state.task == null;
 
       LogUtils.log(request);
       Dio.FormData formData = Dio.FormData.fromMap(request);
-      var res = await _rhmService.taskService.createOrUpdateSubTask(data: formData, isCreateNew: isCreateNew);
+      var res = await _rhmService.taskService.createOrUpdateTask(data: formData, isCreateNew: isCreateNew);
       DialogUtils.hideLoading();
       if (res != null && res['status'] == true) {
         _rhmService.toastService.showToast(
             message: state.task != null ? AppStrings.update_task_success.tr : AppStrings.create_new_task_success.tr,
             isSuccess: true,
             context: Get.context!);
-        if (state.task != null) {
-          NavigationUtils.popUtils(page: Routers.TASK_DETAIL);
-        } else {
-          NavigationUtils.popUtils(page: Routers.TASK_DETAIL);
-        }
+        NavigationUtils.popUtils(page: Routers.MAIN);
       } else {
         _rhmService.toastService.showToast(message: res['message'] ?? AppStrings.error_common.tr, isSuccess: false, context: Get.context!);
       }
@@ -388,7 +397,8 @@ class CreateSubTaskLogic extends GetxController {
           ),
         ),
         title: AppStrings.form_task_complete.tr,
-        positiveText: state.task != null ? AppStrings.btn_update.tr : AppStrings.btn_new.tr,
+        descriptions: AppStrings.form_task_complete_confirm.tr,
+        positiveText: AppStrings.btn_send.tr,
         negativeText: AppStrings.btn_cancel.tr,
         onPositive: () {
           _submitTask();
@@ -396,50 +406,26 @@ class CreateSubTaskLogic extends GetxController {
     DialogUtils.showCenterDialog(child: confirmSendView);
   }
 
-  void createNewOrUpdateTask() {
-    bool isValid = isFormValid();
-    if (isValid) {
-      confirmSubmitTask();
-    } else {
-      _rhmService.toastService.showToast(message: AppStrings.form_invalid_error.tr, isSuccess: false, context: Get.context!);
+  void selectLanhDao(OptionModel selected) {
+    if (!state.selectedLanhDaos.contains(selected)) {
+      state.selectedLanhDaos.add(selected);
     }
   }
 
-  _deleteFileAttach({required String file}) async {
-    try {
-      DialogUtils.showLoading();
-      var request = {'file': file, 'id': state.task?.id};
-      LogUtils.log(request);
-
-      var res = await _rhmService.taskService.deleteFileOfSubTask(request: request);
-      DialogUtils.hideLoading();
-      if (res != null && res['status'] == true) {
-        _rhmService.toastService.showToast(message: AppStrings.delete_file_success.tr, isSuccess: true, context: Get.context!);
-        NavigationUtils.popUtils(page: Routers.TASK_DETAIL);
-      } else {
-        _rhmService.toastService.showToast(message: res['message'] ?? AppStrings.error_common.tr, isSuccess: false, context: Get.context!);
-      }
-    } catch (e) {
-      DialogUtils.hideLoading();
-      _rhmService.toastService.showToast(message: AppStrings.error_common.tr, isSuccess: false, context: Get.context!);
-    }
+  void selectTypeOfWork(OptionModel selected) {
+    LogUtils.logE(message: 'Select type of work ${selected.key} and ${selected.value}');
+    state.selectedTypeOfWorkPlan = selected;
   }
 
-  void onDeleteAttachment({required String file}) {
-    Widget confirmSendView = WarningView(
-        icon: Container(
-          margin: EdgeInsets.only(bottom: 20.h),
-          child: ImageDisplay(
-            Assets.ic_error,
-            width: 36.w,
-          ),
-        ),
-        title: AppStrings.confirm_delete_file.tr,
-        positiveText: AppStrings.btn_delete.tr,
-        negativeText: AppStrings.btn_cancel.tr,
-        onPositive: () {
-          _deleteFileAttach(file: file);
-        });
-    DialogUtils.showCenterDialog(child: confirmSendView);
+  void selectFinance(OptionModel selected) {
+    state.selectedFinance = selected;
+  }
+
+  void selectStatusOfWork(OptionModel selected) {
+    state.selectedStatusOfWork = selected;
+  }
+
+  void selectImportant(OptionModel selected) {
+    state.selectedImportant = selected;
   }
 }

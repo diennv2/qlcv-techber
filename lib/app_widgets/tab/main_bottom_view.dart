@@ -32,10 +32,10 @@ class MainBottomView extends StatelessWidget {
             icon: const Icon(Icons.local_fire_department),
             label: AppStrings.tab_home.tr,
           ),
-          // BottomNavigationBarItem(
-          //   icon: const Icon(Icons.calendar_month),
-          //   label: AppStrings.tab_calendar.tr,
-          // ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.assignment),
+            label: AppStrings.tab_plan.tr,
+          ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.apps_sharp),
             label: AppStrings.tab_application.tr,
