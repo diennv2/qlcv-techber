@@ -11,7 +11,7 @@ import 'application_state.dart';
 
 class ApplicationLogic extends GetxController {
   final ApplicationState state = ApplicationState();
-  static const MethodChannel _channel = MethodChannel('com.qlcv.mobile/channel');
+  static const MethodChannel _channel = MethodChannel('com.techber.qlcv/channel');
 
   @override
   void onReady() {

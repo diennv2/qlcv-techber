@@ -12,7 +12,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
 public class MainActivity extends FlutterActivity {
-    private final String CHANNEL = "com.qlcv.mobile/channel";
+    private final String CHANNEL = "com.techber.qlcv/channel";
     private MethodChannel channel;
 
     @Override
