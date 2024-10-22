@@ -9,6 +9,8 @@ import 'package:mobile_rhm/data/model/response/task/bao_cao_cong_viec.dart';
 import 'package:mobile_rhm/data/model/response/task/sub_task_progress_response.dart';
 import 'package:mobile_rhm/data/model/response/task/subtask_list_response.dart';
 import 'package:mobile_rhm/routers/app_pages.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:mobile_rhm/core/values/colors.dart';
 
 import '../task_detail_logic.dart';
 import '../task_detail_state.dart';
@@ -30,6 +32,7 @@ class TaskDetailInfoPage extends StatelessWidget {
               color: Colors.white,
               padding: EdgeInsets.symmetric(vertical: 12.h),
               child: ListView(
+                controller: logic.taskDetailController,
                 padding: EdgeInsets.zero,
                 children: [
                   Container(
@@ -59,6 +62,15 @@ class TaskDetailInfoPage extends StatelessWidget {
                           },
                         );
                       })),
+                  Obx(() {
+                    LogUtils.logE(message: 'state.isLoadMore.value = ${state.isLoadMore.value}');
+                    return state.isLoadMore.value
+                        ? const Center(
+                        child: CupertinoActivityIndicator(
+                          color: AppColors.Primary,
+                        ))
+                        : const SizedBox.shrink();
+                  }),
                 ],
               ),
             );

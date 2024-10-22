@@ -224,7 +224,7 @@ class AppApiHelper implements ApiHelper {
       List<Employee> res = [];
       Response response = await _dioClient.post(ApiEndpoint.EMPLOYEE_LIST, data: body);
       if (response.statusCode == ServerStatus.SUCCESS) {
-        if (response.data != null && response.data['status'] != false) {
+        if (response.data != null) {
           for (var item in response.data) {
             Employee pb = Employee.fromJson(item);
             res.add(pb);

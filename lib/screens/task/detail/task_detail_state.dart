@@ -24,6 +24,9 @@ class TaskDetailState {
   RxString statusText = ''.obs;
   bool isAllowAddReport = false;
   Rx<OptionModel> currentStatus = OptionModel().obs;
+  RxBool isLoadMore = false.obs;
+  int taskDetailCurrentPage = 1;
+  int taskDetailTotalPage = 1;
 
   TaskDetailState() {
     currentStatus = OptionModel(key: '${task.status}', value: '${task.status}').obs;

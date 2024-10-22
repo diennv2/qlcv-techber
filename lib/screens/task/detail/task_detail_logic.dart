@@ -30,7 +30,13 @@ class TaskDetailLogic extends GetxController {
   final RHMService _rhmService = Get.find<RHMService>();
   late ChatController chatController;
   final ScrollController _chatScrollController = ScrollController();
-
+  final ScrollController taskDetailController = ScrollController();
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    taskDetailController.addListener(_onScrollTaskDetail);
+  }
   @override
   void onReady() {
     super.onReady();
@@ -50,6 +56,8 @@ class TaskDetailLogic extends GetxController {
   Future<void> _loadData() async {
     _rhmService.taskService.getSubTaskList(congviec_id: "${state.task.id}").then((task) {
       if (task != null) {
+        state.taskDetailCurrentPage = int.tryParse((task.currentPage ?? '1')) ?? 1;
+        state.taskDetailTotalPage = (task.pages ?? 1).toInt();
         state.subTasks.value = task;
         _loadSubTaskProgress(subTaskIds: (task.dataProvider ?? []).map((e) => (e.id ?? 0)).toList());
       }
@@ -219,6 +227,29 @@ class TaskDetailLogic extends GetxController {
     } catch (e) {
       DialogUtils.hideLoading();
       _rhmService.toastService.showToast(message: AppStrings.error_common.tr, isSuccess: false, context: Get.context!);
+    }
+  }
+  void _onScrollTaskDetail() {
+    if (taskDetailController.position.pixels >= taskDetailController.position.maxScrollExtent && !state.isLoadMore.value) {
+      LogUtils.logE(message: '_onScrollTaskDetail load more');
+      // Trigger load more when reaching the bottom
+      _loadMoreTaskDetail();
+    }
+  }
+  _loadMoreTaskDetail() async {
+    LogUtils.logE(message: 'taskDetailCurrentPage = ${state.taskDetailCurrentPage}');
+    LogUtils.logE(message: 'taskDetailCurrentPage = ${state.taskDetailTotalPage}');
+    if (state.taskDetailCurrentPage < state.taskDetailTotalPage) {
+      state.isLoadMore.value = true;
+      state.taskDetailCurrentPage++;
+      _rhmService.taskService.getSubTaskList(congviec_id: "${state.task.id}", page: state.taskDetailCurrentPage).then((task) {
+        state.isLoadMore.value = false;
+        if (task != null) {
+          (state.subTasks.value.dataProvider ?? []).addAll(task.dataProvider ?? []);
+          state.subTasks.refresh();
+          _loadSubTaskProgress(subTaskIds: (task.dataProvider ?? []).map((e) => (e.id ?? 0)).toList());
+        }
+      });
     }
   }
 }
