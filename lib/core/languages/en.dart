@@ -97,6 +97,7 @@ const Map<String, String> en = {
   //Tab
   AppStrings.tab_home: 'Công việc',
   AppStrings.tab_plan: 'Kế hoạch',
+  AppStrings.tab_calendar: 'Lịch',
   AppStrings.tab_application: 'Ứng dụng',
 
   //Task status

@@ -31,4 +31,9 @@ class Routers {
   static const REPORT_NEW = '/report_new';
   static const REPORT_DETAIL = '/report_detail';
   static const REVIEW_NEW = '/review_new';
+
+  //Calendar
+  static const CALENDAR_NEW = '/calendar_new';
+  static const CALENDAR_DETAIL = '/calendar_detail';
+  static const CALENDAR_VIEW = '/calendar_view';
 }

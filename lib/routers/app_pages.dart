@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:mobile_rhm/screens/auth/signin/signin_binding.dart';
 import 'package:mobile_rhm/screens/auth/signin/signin_view.dart';
+import 'package:mobile_rhm/screens/calendar/create/create_new_calendar_binding.dart';
+import 'package:mobile_rhm/screens/calendar/create/create_new_calendar_view.dart';
 import 'package:mobile_rhm/screens/common/splash/splash_binding.dart';
 import 'package:mobile_rhm/screens/common/splash/splash_view.dart';
 import 'package:mobile_rhm/screens/main/main_page_binding.dart';
@@ -55,5 +57,8 @@ class AppPages {
     GetPage(name: Routers.REPORT_NEW, page: () => ReportNewPage(), binding: ReportNewBinding()),
     GetPage(name: Routers.REPORT_DETAIL, page: () => ReportDetailPage(), binding: ReportDetailBinding()),
     GetPage(name: Routers.REVIEW_NEW, page: () => ReviewNewPage(), binding: ReviewNewBinding()),
+
+    //Calendar
+    GetPage(name: Routers.CALENDAR_NEW, page: () => CreateNewCalendarPage(), binding: CreateNewCalendarBinding()),
   ];
 }

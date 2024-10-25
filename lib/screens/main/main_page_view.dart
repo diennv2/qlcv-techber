@@ -10,6 +10,7 @@ import 'package:mobile_rhm/screens/main/apps/application_view.dart';
 import 'package:mobile_rhm/screens/main/home/home_view.dart';
 import 'package:mobile_rhm/screens/main/plan/plan_view.dart';
 
+import 'calendar/calendar_view.dart';
 import 'main_page_logic.dart';
 
 class MainPagePage extends StatefulWidget {
@@ -80,6 +81,28 @@ class _MainPagePageState extends State<MainPagePage> {
             ),
           );
         }
+        if (state.currentPage.value == TabConst.TAB_CALENDAR) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: state.isFabExpanded.value ? state.bottomBarHeight : 0),
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: FloatingActionButton.extended(
+                  onPressed: () {
+                    logic.createNewTaskCalendar();
+                  },
+                  label: state.isFabExpanded.value
+                      ? Text(
+                    AppStrings.btn_new.tr,
+                    style: AppTextStyle.regular_12,
+                  )
+                      : const Icon(
+                    Icons.add,
+                    size: 25,
+                  )),
+            ),
+          );
+        }
         return const SizedBox.shrink();
       }),
       drawer: const SidebarDrawer(),
@@ -100,6 +123,7 @@ class _MainPagePageState extends State<MainPagePage> {
                     scrollController: logic.scrollController2,
                     globalKey: _scaffoldKey,
                   ),
+                  CalendarPage(globalKey: _scaffoldKey),
                   ApplicationPage()
                 ],
               );

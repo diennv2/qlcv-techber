@@ -45,6 +45,15 @@ class ApiEndpoint {
   //Notification
   static const String NOTIFICATION_LIST = "@domain/api/get_notification.html";
   static const String UPDATE_READ_NOTIFICATION = "@domain/api/set_notification.html";
+
+  //Calendar
+  static const String CALENDAR_LIST = "@domain/api/getall_calendar.html";
+  static const String ADD_CALENDAR = "@domain/api/add_calendar.html";
+  static const String UPDATE_CALENDAR = "@domain/api/update_calendar.html";
+  static const String DELETE_CALENDAR = "@domain/api/calendar_delete.html";
+  static const String APPOINTMEN_LIST = "@domain/api/getall_lichhen.html";
+  static const String CALENDAR_REVIEW = "@domain/api/calendar_duyet.html";
+
 }
 
 class ApiMapPermission {
