@@ -48,8 +48,8 @@ android {
         applicationId "com.techber.qlcv"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 15
-        versionName '2.1.5'
+        versionCode 17
+        versionName '2.1.7'
         setProperty("archivesBaseName", applicationId + "-v" + versionCode + "(" + versionName + ")")
     }
 

@@ -17,12 +17,15 @@ class MainPageLogic extends GetxController {
   final PageController pageViewController = PageController(initialPage: TabConst.TAB_HOME, keepPage: true);
   final ScrollController scrollController1 = ScrollController();
   final ScrollController scrollController2 = ScrollController();
+  final ScrollController scrollController3 = ScrollController();
 
 
   @override
   void onInit() {
     super.onInit();
     addScrollListener();
+    addScrollListener2();
+    addScrollListener3();
     // checkPlanPagePermission();
   }
 
@@ -56,6 +59,22 @@ class MainPageLogic extends GetxController {
       }
     });
   }
+  void addScrollListener3() {
+    scrollController3.addListener(() {
+      if (scrollController3.position.userScrollDirection == ScrollDirection.reverse) {
+        if (!state.isScrollingDown.value) {
+          state.isScrollingDown.value = true;
+          state.isFabExpanded.value = false;
+        }
+      } else if (scrollController3.position.userScrollDirection == ScrollDirection.forward) {
+        if (state.isScrollingDown.value) {
+          state.isScrollingDown.value = false;
+          state.isFabExpanded.value = true;
+        }
+      }
+    });
+  }
+
   void onPageChange({required int selectTabIndex}) {
     state.currentPage.value = selectTabIndex;
   }
@@ -66,6 +85,10 @@ class MainPageLogic extends GetxController {
 
   void createNewPlan() {
     Get.toNamed(Routers.PLAN_NEW);
+  }
+
+  void createNewTaskCalendar() {
+    Get.toNamed(Routers.CALENDAR_NEW);
   }
   // void checkPlanPagePermission() {
   //   UserProfile? user = _rhmService.userService.getUserProfile();

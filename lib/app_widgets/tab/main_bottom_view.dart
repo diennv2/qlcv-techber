@@ -22,6 +22,7 @@ class MainBottomView extends StatelessWidget {
         unselectedLabelStyle: AppTextStyle.medium_12.copyWith(color: AppColors.SecondaryText),
         backgroundColor: Colors.white,
         selectedItemColor: AppColors.Primary,
+        unselectedItemColor: AppColors.SecondaryText,
         elevation: 10,
         onTap: (index) {
           onTabChange.call(index);
@@ -35,6 +36,10 @@ class MainBottomView extends StatelessWidget {
           BottomNavigationBarItem(
             icon: const Icon(Icons.assignment),
             label: AppStrings.tab_plan.tr,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.calendar_month),
+            label: AppStrings.tab_calendar.tr,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.apps_sharp),
