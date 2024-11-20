@@ -7,6 +7,7 @@ import 'package:mobile_rhm/screens/common/splash/splash_binding.dart';
 import 'package:mobile_rhm/screens/common/splash/splash_view.dart';
 import 'package:mobile_rhm/screens/main/main_page_binding.dart';
 import 'package:mobile_rhm/screens/main/main_page_view.dart';
+import 'package:mobile_rhm/screens/main/xet_duyet_lich/review_calendar_view.dart';
 import 'package:mobile_rhm/screens/notification/detail/notification_detail_binding.dart';
 import 'package:mobile_rhm/screens/notification/detail/notification_detail_view.dart';
 import 'package:mobile_rhm/screens/notification/list/notification_list_binding.dart';
@@ -27,6 +28,9 @@ import 'package:mobile_rhm/screens/task/department/select_employee_binding.dart'
 import 'package:mobile_rhm/screens/task/department/select_employee_view.dart';
 import 'package:mobile_rhm/screens/task/detail/task_detail_binding.dart';
 import 'package:mobile_rhm/screens/task/detail/task_detail_view.dart';
+
+import '../screens/calendar/detail/calendar_detail_binding.dart';
+import '../screens/calendar/detail/calendar_detail_view.dart';
 
 part 'app_routers.dart';
 
@@ -60,5 +64,6 @@ class AppPages {
 
     //Calendar
     GetPage(name: Routers.CALENDAR_NEW, page: () => CreateNewCalendarPage(), binding: CreateNewCalendarBinding()),
+    GetPage(name: Routers.CALENDAR_DETAIL, page: () => CalendarTaskDetailPage(), binding: CalendarDetailBinding()),
   ];
 }

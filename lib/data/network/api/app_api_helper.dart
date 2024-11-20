@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:mobile_rhm/core/utils/dio_error_util.dart';
 import 'package:mobile_rhm/core/utils/log_utils.dart';
+import 'package:mobile_rhm/data/model/response/calendar/calendar.dart';
+import 'package:mobile_rhm/data/model/response/calendar/calendar_task_response.dart';
 import 'package:mobile_rhm/data/model/response/meta/domain.dart';
 import 'package:mobile_rhm/data/model/response/notification/notification.dart';
 import 'package:mobile_rhm/data/model/response/task/co_quan.dart';
@@ -19,6 +21,8 @@ import 'package:mobile_rhm/data/network/constants/server_status.dart';
 import 'package:mobile_rhm/data/network/dio_client.dart';
 import 'package:mobile_rhm/data/network/exceptions/auth_exceptions.dart';
 import 'package:mobile_rhm/data/network/exceptions/network_exceptions.dart';
+
+import '../../model/response/calendar/task_calendar.dart';
 
 class AppApiHelper implements ApiHelper {
   final DioClient _dioClient;
@@ -512,4 +516,150 @@ class AppApiHelper implements ApiHelper {
     }
     return null;
   }
+
+  @override
+  Future createOrUpdateTaskCalendar({required FormData formData, required bool isCreateNew}) async {
+    try {
+      Response response = await _dioClient.post(isCreateNew ? ApiEndpoint.CREATE_CALENDAR : ApiEndpoint.UPDATE_CALENDAR,
+          data: formData,
+          options: Options(
+            headers: {'content-type': 'multipart/form-data'},
+            contentType: 'multipart/form-data',
+          ));
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return response.data;
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      handleError(err);
+    }
+    return null;
+  }
+
+  @override
+  Future deleteTaskCalendar({required FormData formData}) async {
+    try {
+      Response response = await _dioClient.post(ApiEndpoint.DELETE_CALENDAR,
+          data: formData,
+          options: Options(
+            headers: {'content-type': 'multipart/form-data'},
+            contentType: 'multipart/form-data',
+          ));
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return response.data;
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      handleError(err);
+    }
+    return null;
+  }
+
+  @override
+  Future<List<CalendarTask>?> getAllTaskCalendar({String? begin, String? end}) async {
+    try {
+      var body = {
+        "begin": begin ?? "",
+        "end": end ?? '',
+      };
+      List<CalendarTask> res = [];
+      Response response = await _dioClient.post(ApiEndpoint.CALENDAR_LIST, data: body);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        for (var item in response.data) {
+          CalendarTask pb = CalendarTask.fromJson(item);
+          res.add(pb);
+        }
+        return res;
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      handleError(err);
+    }
+    return null;
+  }
+
+  @override
+  Future reviewTaskCalendar({required int calendar_id}) async {
+    try {
+      var request = {'calendar_id': calendar_id};
+      Response response = await _dioClient.post(ApiEndpoint.CALENDAR_REVIEW, data: request);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return response.data;
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      LogUtils.logE(message: 'addComment error ${err.toString()}');
+      handleError(err);
+    }
+    return null;
+  }
+
+  @override
+  Future<CalendarTaskResponse?> getTaskCalendarById({required FormData formData}) async {
+    try {
+      // Gửi yêu cầu POST với formData
+      Response response = await _dioClient.post(ApiEndpoint.DETAIL_CANLENDAR_TASK, data: formData);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return CalendarTaskResponse.fromJson(response.data);
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      LogUtils.logE(message: 'getTaskCalendar error ${err.toString()}');
+      handleError(err);
+    }
+    return null;
+  }
+
+  @override
+  Future<AllLichHenResponse?> getTasksCalendar(
+      {int? page}) async {
+    try {
+      var body = {
+        "page": page ?? 1,
+      };
+      Response response = await _dioClient.post(ApiEndpoint.APPOINTMEN_LIST, data: body);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return AllLichHenResponse.fromJson(response.data);
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      handleError(err);
+    }
+    return null;
+  }
+
+  @override
+  Future updateStatus({required num id}) async {
+    try {
+      // Tạo FormData với tham số id và nguoiduyet
+      var formData = FormData.fromMap({
+        'id': id,
+      });
+
+      // Gửi yêu cầu POST với FormData và header multipart/form-data
+      Response response = await _dioClient.post(
+        ApiEndpoint.CALENDAR_UPDATE_STATUS,
+        data: formData,
+        options: Options(
+          headers: {'content-type': 'multipart/form-data'},
+          contentType: 'multipart/form-data',
+        ),
+      );
+
+      // Kiểm tra mã phản hồi từ server
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return response.data;
+      }
+
+      // Nếu phản hồi không thành công, ném ra ngoại lệ
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      // Xử lý lỗi
+      LogUtils.logE(message: 'updateStatusCalendar error ${err.toString()}');
+      handleError(err);
+    }
+
+    return null;
+  }
+
 }

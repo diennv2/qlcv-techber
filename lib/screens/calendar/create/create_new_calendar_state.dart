@@ -2,13 +2,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:mobile_rhm/core/constants/keys.dart';
 import 'package:mobile_rhm/data/model/common/opttion_model.dart';
+import 'package:mobile_rhm/data/model/response/calendar/calendar_task_response.dart';
+import 'package:mobile_rhm/data/model/response/calendar/task_calendar.dart';
 import 'package:mobile_rhm/data/model/response/task/employee.dart';
 import 'package:mobile_rhm/data/model/response/task/phong_ban.dart';
 import 'package:mobile_rhm/data/model/response/task/task.dart';
 
 class CreateNewCalendarState {
-  //For update task
-  TaskDetail? task = Get.arguments != null ? Get.arguments[AppExtraData.DATA] : null;
+  // For update task
+  CalendarTaskDetail? task;
 
   RxString errorTaskName = ''.obs;
   RxString taskType = ''.obs;
@@ -31,15 +33,18 @@ class CreateNewCalendarState {
   RxList<PhongBan> phongBans = <PhongBan>[].obs;
 
   List<OptionModel> selectedLanhDaos = [];
-  OptionModel? selectedTypeOfWork;
-  OptionModel? selectedFinance;
-  OptionModel? selectedStatusOfWork;
-  OptionModel? selectedImportant;
-  OptionModel? selectedTaskType;
 
   RxBool isAllowCRUD = false.obs;
 
-  CreateNewTaskState() {
-    ///Initialize variables
+  CreateNewCalendarState() {
+    // Kiểm tra Get.arguments nếu nó là TaskCalendarDetail
+    var arguments = Get.arguments;
+
+    if (arguments is CalendarTaskDetail) {
+      task = arguments; // Gán đối tượng TaskCalendarDetail
+    } else {
+      print('Lỗi: Get.arguments không phải là TaskCalendarDetail');
+    }
   }
+
 }

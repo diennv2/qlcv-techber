@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:mobile_rhm/data/model/response/calendar/calendar_task_response.dart';
+import 'package:mobile_rhm/data/model/response/calendar/task_calendar.dart';
 import 'package:mobile_rhm/data/model/response/meta/domain.dart';
 import 'package:mobile_rhm/data/model/response/notification/notification.dart';
 import 'package:mobile_rhm/data/model/response/task/co_quan.dart';
@@ -9,6 +11,7 @@ import 'package:mobile_rhm/data/model/response/task/subtask_list_response.dart';
 import 'package:mobile_rhm/data/model/response/task/type_of_work.dart';
 import 'package:mobile_rhm/data/model/response/user/me/UserProfile.dart';
 
+import '../../model/response/calendar/calendar.dart';
 import '../../model/response/task/phong_ban.dart';
 import '../../model/response/task/sub_task_progress_response.dart';
 import '../../model/response/task/task.dart';
@@ -24,6 +27,8 @@ abstract class ApiHelper {
 
   Future<TasksResponse?> getPlansByFilter(
       {int? page, String? phongbanid, String? statusFilter, String? tenFilter, String? loaiduanFilter, String? nguoinhanviecFilter});
+
+  Future<List<CalendarTask>?> getAllTaskCalendar({required String? begin, required String? end});
 
   Future<List<PhongBan>?> getPhongBan();
 
@@ -47,6 +52,8 @@ abstract class ApiHelper {
 
   Future createOrUpdateTask({required FormData formData, required bool isCreateNew});
 
+  Future createOrUpdateTaskCalendar({required FormData formData, required bool isCreateNew});
+
   Future createOrUpdateSubTask({required FormData formData, required bool isCreateNew});
 
   Future deleteFileOfSubTask({required dynamic request});
@@ -56,6 +63,10 @@ abstract class ApiHelper {
   Future addComment({required num congviec_id, required num replyto, required String comment});
 
   Future unsentComment({required int congviec_id});
+
+  Future reviewTaskCalendar({required int calendar_id});
+
+  Future deleteTaskCalendar({required FormData formData});
 
   Future addNewReview({required FormData formData});
 
@@ -68,4 +79,10 @@ abstract class ApiHelper {
   Future<List<NotificationResponse>?> notificationList();
 
   Future updateNotificationRead({required dynamic request});
+
+  Future<CalendarTaskResponse?> getTaskCalendarById({required FormData formData});
+
+  Future<AllLichHenResponse?> getTasksCalendar({int? page});
+
+  Future updateStatus({required num id});
 }

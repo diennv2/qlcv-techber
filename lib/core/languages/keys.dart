@@ -225,4 +225,18 @@ abstract class AppStrings {
   static const String unknown_deadline = 'unknown_deadline';
   static const String hi_label = 'hi_label';
   static const String add_subtask_label = 'add_subtask_label';
+  //Calendar
+  static const String calendar_new_title = 'calendar_new_title';
+  static const String calendar_update_title = 'calendar_update_title';
+  static const String calendar_name  = 'calendar_name';
+  static const String calendar_descriptions  = 'calendar_descriptions';
+  static const String calendar_manage_incharge  = 'calendar_manage_incharge';
+  static const String calendar_info  = 'calendar_info';
+  static const String calendar_start_time  = 'calendar_start_time';
+  static const String calendar_start_time_hint  = 'calendar_start_time_hint';
+  static const String calendar_end_time  = 'calendar_end_time';
+  static const String calendar_end_time_hint  = 'calendar_end_time_hint';
+  static const String calendar_is_important  = 'calendar_is_important';
+  static const String calendar_add_new = 'calendar_add_new';
+  static const String calendar_content = 'calendar_content';
 }

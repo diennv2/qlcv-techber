@@ -36,4 +36,7 @@ class Routers {
   static const CALENDAR_NEW = '/calendar_new';
   static const CALENDAR_DETAIL = '/calendar_detail';
   static const CALENDAR_VIEW = '/calendar_view';
+  static const REVIEW_CALENDAR = '/review_calenadar';
+  static const DELETE_TASK_CALENDAR = '/calendar_delete';
+  static const DUYET_CALENDAR = '/calendar_status';
 }

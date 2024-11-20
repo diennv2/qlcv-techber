@@ -48,11 +48,13 @@ class ApiEndpoint {
 
   //Calendar
   static const String CALENDAR_LIST = "@domain/api/getall_calendar.html";
-  static const String ADD_CALENDAR = "@domain/api/add_calendar.html";
+  static const String DETAIL_CANLENDAR_TASK = "@domain/api/view_calendar.html";
+  static const String CREATE_CALENDAR = "@domain/api/add_calendar.html";
   static const String UPDATE_CALENDAR = "@domain/api/update_calendar.html";
-  static const String DELETE_CALENDAR = "@domain/api/calendar_delete.html";
+  static const String DELETE_CALENDAR = "@domain/api/delete_calendar.html";
   static const String APPOINTMEN_LIST = "@domain/api/getall_lichhen.html";
   static const String CALENDAR_REVIEW = "@domain/api/calendar_duyet.html";
+  static const String CALENDAR_UPDATE_STATUS = "@domain/api/updatecalendar_status.html";
 
 }
 

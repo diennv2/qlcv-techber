@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart' as Dio;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,10 +25,10 @@ import 'package:mobile_rhm/core/values/assets.dart';
 import 'package:mobile_rhm/data/model/common/opttion_model.dart';
 import 'package:mobile_rhm/data/model/response/task/employee.dart';
 import 'package:mobile_rhm/data/model/response/task/nguoi_nhan_viec.dart';
-import 'package:mobile_rhm/data/model/response/task/phong_ban.dart';
 import 'package:mobile_rhm/data/model/response/user/me/UserProfile.dart';
 import 'package:mobile_rhm/routers/app_pages.dart';
 
+import '../../../app_widgets/date_time_picker2.dart';
 import 'create_new_calendar_state.dart';
 
 class CreateNewCalendarLogic extends GetxController {
@@ -36,11 +38,7 @@ class CreateNewCalendarLogic extends GetxController {
   final TextEditingController taskNameController = TextEditingController();
   final TextEditingController taskInfoController = TextEditingController();
 
-  final GroupButtonController groupTaskStatusController = GroupButtonController();
-  final GroupButtonController groupTypeWorkController = GroupButtonController();
   final GroupButtonController groupLanhDaoController = GroupButtonController();
-  final GroupButtonController groupFinanceController = GroupButtonController();
-  final GroupButtonController groupImportantController = GroupButtonController();
 
   @override
   void onInit() {
@@ -62,8 +60,8 @@ class CreateNewCalendarLogic extends GetxController {
   _initData() {
     //TODO: init cause Update
     if (state.task != null) {
-      taskNameController.text = state.task?.ten ?? '';
-      taskInfoController.text = state.task?.mota ?? '';
+      taskNameController.text = state.task?.tencongviec ?? '';
+      taskInfoController.text = state.task?.chitiet ?? '';
     }
 
     taskNameController.addListener(() {
@@ -73,29 +71,21 @@ class CreateNewCalendarLogic extends GetxController {
     _rhmService.metadataService.getLanhDao().then((value) {
       if (value != null) {
         state.lanhDaos.value = value.map((e) => OptionModel(key: '${e.id}', value: e.ten ?? '')).toList();
+
         //TODO: Init lanh dao selected
         if (state.task != null) {
-          for (var lanhdao in (state.task?.lanhdaophutrachList ?? [])) {
-            state.selectedLanhDaos.add(OptionModel(key: '${lanhdao.id}', value: lanhdao.ten ?? ''));
-            int index = state.lanhDaos.indexWhere((ld) => ld.key == '${lanhdao.id}');
-            groupLanhDaoController.selectIndex(index);
-          }
-        }
-      }
-    });
+          final lanhdao = state.task?.lanhdao; // Lấy giá trị lanhdao (nếu là num)
 
-    _rhmService.metadataService.getLoaiCongViec().then((value) {
-      if (value != null) {
-        state.typeOfWorks.value = value.map((e) => OptionModel(key: '${e.id}', value: e.tenloai ?? '')).toList();
-        if (state.task != null) {
-          LogUtils.logE(message: 'Find ${state.task!.loaiduanId}');
-          state.selectedTypeOfWork = OptionModel(key: '${state.task!.loaiduanId}', value: state.task!.loaiduanName);
-          int index = state.typeOfWorks.indexWhere((element) => element.key == '${state.task!.loaiduanId}');
-          LogUtils.logE(message: 'Index to find = $index');
-          groupTypeWorkController.selectIndex(index);
-        } else {
-          state.selectedTypeOfWork = OptionModel(key: '${value.first.id}', value: value.first.tenloai ?? '');
-          groupTypeWorkController.selectIndex(0);
+          if (lanhdao != null) {
+            // Tạo OptionModel từ lanhdao (kiểu num)
+            state.selectedLanhDaos.add(OptionModel(key: '$lanhdao', value: '$lanhdao'));
+
+            // Tìm và chọn lanhdao từ danh sách lanhDaos
+            int index = state.lanhDaos.indexWhere((ld) => ld.key == '$lanhdao');
+            if (index != -1) {
+              groupLanhDaoController.selectIndex(index);
+            }
+          }
         }
       }
     });
@@ -104,27 +94,10 @@ class CreateNewCalendarLogic extends GetxController {
     state.typeOfFinances.value = FinanceTask.TASK_FILTER;
     state.typeOfImportants.value = ImportantTask.TASK_FILTER;
 
-    if (state.task != null) {
-      state.selectedFinance = FinanceTask.TASK_FILTER.last;
-      state.selectedStatusOfWork = TaskStatus.TASK_CREATE_FILTER.firstWhere((element) => element.key == '${state.task!.status}');
-      state.selectedImportant = state.task!.isImportant == true ? ImportantTask.TASK_FILTER.first : ImportantTask.TASK_FILTER.last;
-
-      groupTaskStatusController.selectIndex(TaskStatus.TASK_CREATE_FILTER.indexWhere((element) => element.key == state.selectedStatusOfWork?.key));
-      groupFinanceController.selectIndex(1);
-      groupImportantController.selectIndex(state.task!.isImportant == true ? 0 : 1);
-    } else {
-      state.selectedFinance = FinanceTask.TASK_FILTER.last;
-      state.selectedStatusOfWork = TaskStatus.TASK_CREATE_FILTER.first;
-      state.selectedImportant = ImportantTask.TASK_FILTER.last;
-
-      groupTaskStatusController.selectIndex(0);
-      groupFinanceController.selectIndex(1);
-      groupImportantController.selectIndex(1);
-    }
 
     //TODO: init start time and endtime
     if (state.task != null) {
-      String? startTime = state.task?.ngaybatdau;
+      String? startTime = state.task?.starttime;
       if (startTime.isNotNullOrBlank) {
         LogUtils.logE(message: 'Start date $startTime');
         DateTime? date = _convertTime(timeInString: startTime);
@@ -134,7 +107,7 @@ class CreateNewCalendarLogic extends GetxController {
         }
       }
 
-      String? endTime = state.task?.deadline?.endDate;
+      String? endTime = state.task?.endtime;
       if (endTime.isNotNullOrBlank) {
         LogUtils.logE(message: 'End date $endTime');
         DateTime? date = _convertTime(timeInString: endTime, formatDate: 'yyyy-MM-dd');
@@ -146,17 +119,13 @@ class CreateNewCalendarLogic extends GetxController {
       }
     }
 
-    _loadStaff();
-
     //TODO: Check CRUD
     if (state.task == null) {
       state.isAllowCRUD.value = true;
     } else {
       UserProfile? user = _rhmService.userService.getUserProfile();
-      if (user?.displayName?.toLowerCase() == UserRole.SUPER_ADMIN.toLowerCase() || user?.userId == state.task?.nguoiphutrachId) {
+      if (user?.displayName?.toLowerCase() == UserRole.SUPER_ADMIN.toLowerCase() || user?.userId == state.task?.owner) {
         state.isAllowCRUD.value = true;
-      } else if (state.task?.status == TaskStatus.COMPLETED || state.task?.status == TaskStatus.CANCELED) {
-        state.isAllowCRUD.value = false;
       }
     }
   }
@@ -184,35 +153,12 @@ class CreateNewCalendarLogic extends GetxController {
     }
   }
 
-  void _loadStaff() async {
-    _rhmService.metadataService.getPhongBan().then((value) {
-      state.phongBans.value = value;
-      LogUtils.logE(message: 'Get phong ban OK size = ${state.phongBans.length} ${state.phongBans.first.ten}');
-      _rhmService.metadataService.getEmployeeAndDep(phongban_ids: state.phongBans.map((element) => "${element.id}").toList()).then((staff) {
-        if (staff != null) {
-          state.staffs.value = staff;
-          LogUtils.logE(message: 'Get staffs  OK');
-          //TODO: Check staff
-          if (state.task != null) {
-            for (Nguoinhanviec user in (state.task!.nguoinhanviec ?? [])) {
-              updateEmployee(state.staffs, user);
-            }
-          }
-        }
-      });
-    });
-  }
-
-  void selectTaskType(OptionModel selected) {
-    state.selectedTaskType = selected;
-  }
-
   void selectTaskStartTime() async {
-    Widget datetimePick = DateTimePicker(
+    Widget datetimePick = DateTimePicker2(
       onSelect: (DateTime date) {
         LogUtils.logE(message: 'Select date time');
         state.selectedStartDateTime.value = date;
-        state.dateTimeStartValue.value = '${date.day}/${date.month}/${date.year}';
+        state.dateTimeStartValue.value = '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}';
         state.errorStartTime.value = '';
       },
       initDate: state.selectedStartDateTime.value,
@@ -222,11 +168,11 @@ class CreateNewCalendarLogic extends GetxController {
   }
 
   void selectTaskEndTime() async {
-    Widget datetimePick = DateTimePicker(
+    Widget datetimePick = DateTimePicker2(
       onSelect: (DateTime date) {
         LogUtils.logE(message: 'Select date time');
         state.selectedEndDateTime.value = date;
-        state.dateTimeEndValue.value = '${date.day}/${date.month}/${date.year}';
+        state.dateTimeEndValue.value = '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}';
       },
       initDate: state.dateTimeStartValue.value.isNotNullOrBlank ? state.selectedStartDateTime.value : state.selectedStartDateTime.value,
       title: AppStrings.task_end_time.tr,
@@ -237,32 +183,6 @@ class CreateNewCalendarLogic extends GetxController {
   void clearFile(PlatformFile file) {
     state.attachFiles.remove(file);
     state.attachFiles.refresh();
-  }
-
-  void addFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowMultiple: true,
-      allowedExtensions: FileExtension.EXTENSTION,
-    );
-    if (result != null) {
-      state.attachFiles.addAll(result.files);
-      state.attachFiles.toSet().toList();
-      state.attachFiles.refresh();
-    } else {
-      // User canceled the picker
-    }
-  }
-
-  void onStaffChange({required Employee staff, required PhongBan dep}) {
-    List<Employee> employees = state.staffs[dep.id.toString()] ?? [];
-    for (Employee employee in employees) {
-      if (employee.id == staff.id) {
-        employee.taskRole = staff.taskRole;
-        break;
-      }
-    }
-    state.staffs.refresh();
   }
 
   void createNewOrUpdateTask() {
@@ -342,50 +262,57 @@ class CreateNewCalendarLogic extends GetxController {
   void _submitTask() async {
     try {
       DialogUtils.showLoading();
-      Map<String, String> staff = _createStaffRequest();
-      DateFormat originalFormat = DateFormat('dd/MM/yyyy');
-      DateFormat newFormat = DateFormat('yyyy-MM-dd');
+      // Include hours and minutes in the DateFormat
+      DateFormat originalFormat = DateFormat('dd/MM/yyyy HH:mm');
+      DateFormat newFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
-      List<Dio.MultipartFile> files = await _createFiles();
       var request = {
-        'Duan[ten]': taskNameController.text,
-        'Duan[mota]': taskInfoController.text,
-        'listphutrach[]': state.selectedLanhDaos.map((option) => option.key).toList(),
-        'Duan[loaiduan_id]': state.selectedTypeOfWork?.key,
-        'Duan[ngaybatdau]':
-            state.dateTimeStartValue.value.isNotNullOrBlank ? newFormat.format(originalFormat.parse(state.dateTimeStartValue.value)) : '',
-        'Duan[deadline]': state.dateTimeEndValue.value.isNotNullOrBlank ? newFormat.format(originalFormat.parse(state.dateTimeEndValue.value)) : '',
-        'Duan[taichinh]': state.selectedFinance?.key,
-        'Duan[status]': state.selectedStatusOfWork?.key,
-        'Duan[tongdientich]': state.selectedImportant?.key,
-        'listphongban[]': _createPhongBanRequest(),
-        'fileinp[]': files,
-        ...staff
+        'Calendar[tencongviec]': taskNameController.text,
+        'Calendar[chitiet]': taskInfoController.text,
+        'Calendar[lanhdao]': state.selectedLanhDaos.map((option) => option.key).toList(),
+        'Calendar[starttime]': state.dateTimeStartValue.value.isNotNullOrBlank
+            ? newFormat.format(originalFormat.parse(state.dateTimeStartValue.value))
+            : '',
+        'Calendar[endtime]': state.dateTimeEndValue.value.isNotNullOrBlank
+            ? newFormat.format(originalFormat.parse(state.dateTimeEndValue.value))
+            : '',
       };
+
       if (state.task != null) {
-        request['id'] = state.task!.id;
+        request['id'] = state.task!.id!;
       }
 
       bool isCreateNew = state.task == null;
 
       LogUtils.log(request);
       Dio.FormData formData = Dio.FormData.fromMap(request);
-      var res = await _rhmService.taskService.createOrUpdateTask(data: formData, isCreateNew: isCreateNew);
+      var res = await _rhmService.calendarService.createOrUpdateTask(data: formData, isCreateNew: isCreateNew);
       DialogUtils.hideLoading();
+
       if (res != null && res['status'] == true) {
         _rhmService.toastService.showToast(
-            message: state.task != null ? AppStrings.update_task_success.tr : AppStrings.create_new_task_success.tr,
-            isSuccess: true,
-            context: Get.context!);
+          message: state.task != null ? AppStrings.update_task_success.tr : AppStrings.create_new_task_success.tr,
+          isSuccess: true,
+          context: Get.context!,
+        );
         NavigationUtils.popUtils(page: Routers.MAIN);
       } else {
-        _rhmService.toastService.showToast(message: res['message'] ?? AppStrings.error_common.tr, isSuccess: false, context: Get.context!);
+        _rhmService.toastService.showToast(
+          message: res['message'] ?? AppStrings.error_common.tr,
+          isSuccess: false,
+          context: Get.context!,
+        );
       }
     } catch (e) {
       DialogUtils.hideLoading();
-      _rhmService.toastService.showToast(message: AppStrings.error_common.tr, isSuccess: false, context: Get.context!);
+      _rhmService.toastService.showToast(
+        message: AppStrings.error_common.tr,
+        isSuccess: false,
+        context: Get.context!,
+      );
     }
   }
+
 
   void confirmSubmitTask() {
     Widget confirmSendView = WarningView(
@@ -407,25 +334,12 @@ class CreateNewCalendarLogic extends GetxController {
   }
 
   void selectLanhDao(OptionModel selected) {
-    if (!state.selectedLanhDaos.contains(selected)) {
-      state.selectedLanhDaos.add(selected);
-    }
+    // Deselect all previous selections and add the new selection
+    state.selectedLanhDaos.clear();
+    state.selectedLanhDaos.add(selected);
+
+    // Update the group button controller to reflect the new selection
+    groupLanhDaoController.selectIndex(state.lanhDaos.indexOf(selected));
   }
 
-  void selectTypeOfWork(OptionModel selected) {
-    LogUtils.logE(message: 'Select type of work ${selected.key} and ${selected.value}');
-    state.selectedTypeOfWork = selected;
-  }
-
-  void selectFinance(OptionModel selected) {
-    state.selectedFinance = selected;
-  }
-
-  void selectStatusOfWork(OptionModel selected) {
-    state.selectedStatusOfWork = selected;
-  }
-
-  void selectImportant(OptionModel selected) {
-    state.selectedImportant = selected;
-  }
 }

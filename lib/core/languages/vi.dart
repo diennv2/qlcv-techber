@@ -220,4 +220,19 @@ const Map<String, String> vi = {
   AppStrings.unknown_deadline: 'Không xác định',
   AppStrings.hi_label: 'Xin chào',
   AppStrings.add_subtask_label: 'Thêm mới công việc chi tiết:',
+
+  //Calendar
+  AppStrings.calendar_new_title: 'Thêm mới công việc',
+  AppStrings.calendar_update_title: 'Cập nhật công việc',
+  AppStrings.calendar_name: 'Tên Công việc',
+  AppStrings.calendar_descriptions: 'Nhập thông tin công việc cụ thể',
+  AppStrings.calendar_manage_incharge: 'Lãnh đạo phụ trách',
+  AppStrings.calendar_info: 'Thông tin',
+  AppStrings.calendar_start_time: 'Ngày bắt đầu',
+  AppStrings.calendar_start_time_hint: 'Chọn ngày bắt đầu',
+  AppStrings.calendar_end_time: 'Hạn hoàn thành',
+  AppStrings.calendar_end_time_hint: 'Chọn thời gian hoàn thành',
+  AppStrings.calendar_is_important: 'Việc quan trọng',
+  AppStrings.calendar_add_new: 'Thêm mới',
+  AppStrings.calendar_content: 'Nội dung công việc',
 };

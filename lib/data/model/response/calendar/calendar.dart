@@ -1,34 +1,50 @@
-// models/calendar_event.dart
 import 'dart:ui';
 
-class CalendarEvent {
-  final String id;
-  final String title;
-  final DateTime start;
-  final DateTime end;
-  final Color backgroundColor;
-  final Color textColor;
-  final bool isMine;
+class CalendarTask {
+  num? id;
+  String? title;
+  DateTime? start;
+  DateTime? end;
+  Color? backgroundColor;
+  Color? textColor;
+  bool? isMine;
 
-  CalendarEvent({
-    required this.id,
-    required this.title,
-    required this.start,
-    required this.end,
-    required this.backgroundColor,
-    required this.textColor,
-    required this.isMine,
-  });
+  CalendarTask({this.id, this.title});
 
-  factory CalendarEvent.fromJson(Map<String, dynamic> json) {
-    return CalendarEvent(
-      id: json['id'],
-      title: json['title'],
-      start: DateTime.parse(json['start']),
-      end: DateTime.parse(json['end']),
-      backgroundColor: Color(int.parse(json['backgroundColor'])),
-      textColor: Color(int.parse(json['textColor'])),
-      isMine: json['ismine'],
-    );
+  CalendarTask.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+    start = json['start'] != null ? DateTime.parse(json['start']) : null;
+    end = json['end'] != null ? DateTime.parse(json['end']) : null;
+    backgroundColor = _parseColor(json['backgroundColor']);
+    textColor = _parseColor(json['textColor']);
+    isMine = json['ismine'];
+  }
+
+  static Color? _parseColor(String? colorString) {
+    if (colorString == null) return null;
+    colorString = colorString.replaceAll("#", "");
+    try {
+      if (colorString.length == 6) {
+        return Color(int.parse("FF$colorString", radix: 16));
+      } else if (colorString.length == 8) {
+        return Color(int.parse(colorString, radix: 16));
+      }
+    } catch (e) {
+      print('Error parsing color: $colorString');
+    }
+    return null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['title'] = this.title;
+    data['start'] = this.start?.toIso8601String();
+    data['end'] = this.end?.toIso8601String();
+    data['backgroundColor'] = this.backgroundColor?.value.toRadixString(16).padLeft(8, '0');
+    data['textColor'] = this.textColor?.value.toRadixString(16).padLeft(8, '0');
+    data['isMine'] = this.isMine;
+    return data;
   }
 }

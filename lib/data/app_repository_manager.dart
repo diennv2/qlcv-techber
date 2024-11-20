@@ -1,5 +1,7 @@
 import 'package:dio/src/form_data.dart';
 import 'package:mobile_rhm/data/local/database_helper.dart';
+import 'package:mobile_rhm/data/model/response/calendar/calendar.dart';
+import 'package:mobile_rhm/data/model/response/calendar/calendar_task_response.dart';
 import 'package:mobile_rhm/data/model/response/meta/domain.dart';
 import 'package:mobile_rhm/data/model/response/notification/notification.dart';
 import 'package:mobile_rhm/data/model/response/task/co_quan.dart';
@@ -15,6 +17,7 @@ import 'package:mobile_rhm/data/model/response/user/me/UserProfile.dart';
 import 'package:mobile_rhm/data/network/api/api_helper.dart';
 import 'package:mobile_rhm/data/repository_manager.dart';
 
+import 'model/response/calendar/task_calendar.dart';
 import 'prefs/preference_helper.dart';
 
 class AppRepositoryManager extends RepositoryManager {
@@ -226,5 +229,40 @@ class AppRepositoryManager extends RepositoryManager {
   @override
   Future updateNotificationRead({required request}) {
     return _apiHelper.updateNotificationRead(request: request);
+  }
+
+  @override
+  Future createOrUpdateTaskCalendar({required FormData formData, required bool isCreateNew}) {
+    return _apiHelper.createOrUpdateTaskCalendar(formData: formData, isCreateNew: isCreateNew);
+  }
+
+  @override
+  Future deleteTaskCalendar({required FormData formData}) {
+    return _apiHelper.deleteTaskCalendar(formData: formData);
+  }
+
+  @override
+  Future<List<CalendarTask>?> getAllTaskCalendar({String? begin, String? end}) {
+    return _apiHelper.getAllTaskCalendar(begin: begin, end: end);
+  }
+
+  @override
+  Future reviewTaskCalendar({required int calendar_id}) {
+    return _apiHelper.reviewTaskCalendar(calendar_id: calendar_id);
+  }
+
+  @override
+  Future<CalendarTaskResponse?> getTaskCalendarById({required FormData formData,}) {
+    return _apiHelper.getTaskCalendarById(formData: formData);
+  }
+
+  @override
+  Future<AllLichHenResponse?> getTasksCalendar({int? page}) {
+    return _apiHelper.getTasksCalendar(page: page);
+  }
+
+  @override
+  Future updateStatus({required num id}) {
+    return _apiHelper.updateStatus(id: id);
   }
 }

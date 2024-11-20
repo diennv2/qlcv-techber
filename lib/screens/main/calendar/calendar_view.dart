@@ -4,14 +4,13 @@ import 'package:get/get.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:mobile_rhm/app_widgets/empty_view.dart';
 import 'package:mobile_rhm/app_widgets/hide_keyboard.dart';
-import 'package:mobile_rhm/app_widgets/home_search_view.dart';
-import 'package:mobile_rhm/app_widgets/skeleton_loading.dart';
 import 'package:mobile_rhm/core/theme/text_theme.dart';
 import 'package:mobile_rhm/core/values/colors.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
+import 'package:intl/intl.dart';
 
-import '../../../app_widgets/dropdown/filter_dropdown.dart';
-import '../../../core/languages/keys.dart';
+import '../../../data/model/response/calendar/calendar.dart';
+import '../xet_duyet_lich/review_calendar_view.dart';
 import 'calendar_logic.dart';
 import 'calendar_state.dart';
 
@@ -19,23 +18,55 @@ class CalendarPage extends StatefulWidget {
   final GlobalKey<ScaffoldState> globalKey;
   final CalendarLogic calendarLogic = Get.find<CalendarLogic>();
   final CalendarState state = Get.find<CalendarLogic>().state;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  CalendarPage({super.key, required this.globalKey});
+  CalendarPage({Key? key, required this.globalKey}) : super(key: key);
 
   @override
   State<CalendarPage> createState() => _CalendarPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderStateMixin {
+class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
+    widget.calendarLogic.fetchEvents();
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: isStartDate ? widget.state.beginDate.value : widget.state.endDate.value,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      if (isStartDate) {
+        widget.calendarLogic.setStartDate(picked);
+      } else {
+        widget.calendarLogic.setEndDate(picked);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.GrayLight,
+      appBar: AppBar(
+        title: Text('Lịch', style: AppTextStyle.bold_18),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.calendar_today),
+            onPressed: () {
+              Get.to(() => ReviewCalendarPage(
+                scrollController: widget.calendarLogic.scrollController,
+                globalKey: widget.globalKey,
+              ));
+            },
+          ),
+        ],
+      ),
       body: HideKeyBoard(
         child: Stack(
           children: [
@@ -43,95 +74,103 @@ class _CalendarPageState extends State<CalendarPage> with SingleTickerProviderSt
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(() {
-                    return HomeSearchView(
-                      onOpenDrawer: () {
-                        widget.globalKey.currentState!.openDrawer();
-                      },
-                      hasTextSearch: widget.state.searchEventName.value.isNotEmpty,
-                      textEditingController: widget.calendarLogic.searchEventNameController,
-                    );
-                  }),
-                  SizedBox(
-                    height: 16.h,
-                  ),
-                  SizedBox(
-                    height: 40.h,
-                    width: 1.0.sw,
+                  SizedBox(height: 16.h),
+                  _buildDateRangePicker(),
+                  SizedBox(height: 16.h),
+                  Expanded(
                     child: Obx(() {
-                      return ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        children: [
-                          Obx(() {
-                            return TouchableOpacity(
-                              child: Container(
-                                margin: EdgeInsets.only(right: 8.w),
-                                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: AppColors.Border),
-                                    color: widget.calendarLogic.isShowAllEvents.value ? AppColors.Primary.withOpacity(0.5) : AppColors.White),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  AppStrings.btn_delete_filter.tr,
-                                  style: AppTextStyle.regular_12,
-                                ),
-                              ),
-                              onTap: () {
-                                widget.calendarLogic.deleteFilter();
-                              },
-                            );
-                          }),
-                          ...widget.state.eventFilters.map((filter) {
-                            return FilterDropDownView(
-                                countSelected: filter.selected.value.key.isNotEmpty,
-                                onPress: () {
-                                  widget.calendarLogic.showFilter(filter: filter);
-                                },
-                                label: filter.label ?? '');
-                          })
-                        ],
+                      print('Số lượng sự kiện: ${widget.state.events.length}');
+                      return widget.state.events.isEmpty
+                          ? _buildEmptyView()
+                          : RefreshIndicator(
+                        onRefresh: () async {
+                          await widget.calendarLogic.reloadEvents();
+                        },
+                        child: MonthView(
+                          controller: widget.calendarLogic.eventController,
+                          onEventTap: (events, date) {
+                            if (events is CalendarEventData<CalendarTask>) {
+                              widget.calendarLogic.onDetailCalendarTask(events.event!);
+                            } else {
+                              print('Event is not of type CalendarEventData<CalendarTask>');
+                            }
+                          },
+                          onCellTap: (events, date) => widget.calendarLogic.showAddEventDialog(context, date),
+                        ),
                       );
                     }),
                   ),
-                  Expanded(child: Obx(() {
-                    return widget.state.events.isEmpty
-                        ? RefreshIndicator(
-                      onRefresh: () async {
-                        await widget.calendarLogic.reloadEvents();
-                      },
-                      child: ListView(
-                        children: const [
-                          SkeletonLoadingView(
-                            count: 10,
-                          ),
-                        ],
-                      ),
-                    )
-                        : RefreshIndicator(
-                      onRefresh: () async {
-                        await widget.calendarLogic.reloadEvents();
-                      },
-                      child: MonthView(
-                        controller: widget.calendarLogic.eventController,
-                        onEventTap: (events, date) {
-
-                        },
-                        onCellTap: (events, date) => widget.calendarLogic.showAddEventDialog(context, date),
-                      ),
-                    );
-                  })),
                 ],
               ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => widget.calendarLogic.showAddEventDialog(context, DateTime.now()),
+    );
+  }
+
+  Widget _buildDateRangePicker() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: Obx(() => TouchableOpacity(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+                decoration: BoxDecoration(
+                  color: AppColors.White,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.Border),
+                ),
+                child: Text(
+                  'Từ: ${DateFormat('dd/MM/yyyy').format(widget.state.beginDate.value)}',
+                  style: AppTextStyle.regular_14,
+                ),
+              ),
+              onTap: () => _selectDate(context, true),
+            )),
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Obx(() => TouchableOpacity(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+                decoration: BoxDecoration(
+                  color: AppColors.White,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.Border),
+                ),
+                child: Text(
+                  'Đến: ${DateFormat('dd/MM/yyyy').format(widget.state.endDate.value)}',
+                  style: AppTextStyle.regular_14,
+                ),
+              ),
+              onTap: () => _selectDate(context, false),
+            )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyView() {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await widget.calendarLogic.reloadEvents();
+      },
+      child: ListView(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.h),
+            child: Center(
+              child: Text(
+                'Vui lòng chọn thời gian để xem công việc',
+                style: AppTextStyle.regular_16.copyWith(color: AppColors.TextGray),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
