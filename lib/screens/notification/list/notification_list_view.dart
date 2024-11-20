@@ -27,6 +27,7 @@ class NotificationListPage extends StatelessWidget {
         ),
         elevation: 0,
         scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
       ),
       body: Container(
         child: Obx(() {

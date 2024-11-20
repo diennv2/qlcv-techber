@@ -5,6 +5,7 @@ import 'package:mobile_rhm/app_services/story/calendar/calendar_service.dart';
 import 'package:mobile_rhm/app_services/story/tasks/task_service.dart';
 import 'package:mobile_rhm/core/utils/toast_utils.dart';
 
+import '../noti/notification_service.dart';
 import 'auth/authen_service.dart';
 import 'user/user_service.dart';
 
@@ -16,4 +17,5 @@ class RHMService extends GetxService {
   final TaskService taskService = Get.find<TaskService>();
   final EventBusService eventBusService = Get.find<EventBusService>();
   final CalendarService calendarService = Get.find<CalendarService>();
+  final NotificationService notificationService = Get.find<NotificationService>();
 }

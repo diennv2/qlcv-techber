@@ -23,5 +23,5 @@ abstract class FilterType {
   static const int STATUS = 1;
   static const int TEN_DU_AN = 2;
   static const int LOAI_DU_AN = 3;
-  static const int NGUOI_PHU_TRACH = 4;
+  static const int NGUOI_NHAN_VIEC = 4;
 }

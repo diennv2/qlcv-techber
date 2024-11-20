@@ -130,12 +130,12 @@ class SigninPage extends StatelessWidget {
                         initState: false,
                       ),
                     ),
-                    TextButtonView(
-                      text: AppStrings.forgot_password.tr,
-                      onClick: () {
-                        logic.forgotPassword();
-                      },
-                    )
+                    // TextButtonView(
+                    //   text: AppStrings.forgot_password.tr,
+                    //   onClick: () {
+                    //     logic.forgotPassword();
+                    //   },
+                    // )
                   ],
                 ),
                 SizedBox(

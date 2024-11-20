@@ -73,6 +73,10 @@ dependencies:
   chatview: ^2.1.1
   flutter_html: ^3.0.0-alpha.2
   calendar_view: ^1.2.0
+  firebase_core: ^2.27.0
+  firebase_messaging: ^14.7.19
+  flutter_local_notifications: ^17.1.2
+
 
 dependency_overrides:
   intl: ^0.19.0

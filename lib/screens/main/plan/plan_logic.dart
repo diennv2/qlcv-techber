@@ -74,7 +74,7 @@ class PlanLogic extends GetxController {
     for (TaskFilter filter in state.taskFilters) {
       if (filter.type == FilterType.STATUS) {
         requestFilter.statusFilter = filter.selected.value.key;
-      } else if (filter.type == FilterType.NGUOI_PHU_TRACH) {
+      } else if (filter.type == FilterType.NGUOI_NHAN_VIEC) {
         requestFilter.nguoinhanviecFilter = filter.selected.value.key;
       } else if (filter.type == FilterType.PHONG_BAN) {
         requestFilter.phongbanid = filter.selected.value.key;

@@ -85,4 +85,8 @@ abstract class ApiHelper {
   Future<AllLichHenResponse?> getTasksCalendar({int? page});
 
   Future updateStatus({required num id});
+
+  Future pushFirebaseToken({required String firebaseToken});
+
+  Future deleteFirebaseToken();
 }

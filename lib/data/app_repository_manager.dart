@@ -265,4 +265,12 @@ class AppRepositoryManager extends RepositoryManager {
   Future updateStatus({required num id}) {
     return _apiHelper.updateStatus(id: id);
   }
+  @override
+  Future deleteFirebaseToken() {
+    return _apiHelper.deleteFirebaseToken();
+  }
+  @override
+  Future pushFirebaseToken({required String firebaseToken}) {
+    return _apiHelper.pushFirebaseToken(firebaseToken: firebaseToken);
+  }
 }

@@ -28,6 +28,12 @@ class HomeLogic extends GetxController {
     // TODO: implement onReady
     super.onReady();
     _initData();
+    _requestNotification();
+  }
+
+  void _requestNotification() {
+    _rhmService.notificationService.requestPermission();
+    _rhmService.notificationService.pushFirebaseToken();
   }
 
   void _initData() {
@@ -74,7 +80,7 @@ class HomeLogic extends GetxController {
     for (TaskFilter filter in state.taskFilters) {
       if (filter.type == FilterType.STATUS) {
         requestFilter.statusFilter = filter.selected.value.key;
-      } else if (filter.type == FilterType.NGUOI_PHU_TRACH) {
+      } else if (filter.type == FilterType.NGUOI_NHAN_VIEC) {
         requestFilter.nguoinhanviecFilter = filter.selected.value.key;
       } else if (filter.type == FilterType.PHONG_BAN) {
         requestFilter.phongbanid = filter.selected.value.key;
@@ -109,7 +115,8 @@ class HomeLogic extends GetxController {
         if (state.currentPage.value == 1) {
           state.taskResponse.value = value;
         } else {
-          (state.taskResponse.value.dataProvider ?? []).addAll(value.dataProvider ?? []);
+          (state.taskResponse.value.dataProvider ?? [])
+              .addAll(value.dataProvider ?? []);
           state.taskResponse.refresh();
         }
       }
@@ -133,13 +140,15 @@ class HomeLogic extends GetxController {
   }
 
   void onDetailTask({required TaskDetail task}) {
-    Get.toNamed(Routers.TASK_DETAIL, arguments: {AppExtraData.DATA: task}, preventDuplicates: true);
+    Get.toNamed(Routers.TASK_DETAIL,
+        arguments: {AppExtraData.DATA: task}, preventDuplicates: true);
     // Get.toNamed(Routers.CHAT_SCREEN);
   }
 
   void addScrollListener({required ScrollController scrollController}) {
     scrollController.addListener(() {
-      if (scrollController.position.extentAfter < 300 && !state.isLoadMore.value) {
+      if (scrollController.position.extentAfter < 300 &&
+          !state.isLoadMore.value) {
         if (state.currentPage.value < state.totalPage.value) {
           state.currentPage.value = state.currentPage.value + 1;
           loadTask();

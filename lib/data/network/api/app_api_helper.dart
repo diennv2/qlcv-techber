@@ -662,4 +662,35 @@ class AppApiHelper implements ApiHelper {
     return null;
   }
 
+  @override
+  Future pushFirebaseToken({required String firebaseToken}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'device_token': firebaseToken,
+      });
+      Response response = await _dioClient.post(ApiEndpoint.PUSH_FIREBASE_TOKEN, data: formData);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return response.data;
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      LogUtils.logE(message: 'pushFirebaseToken error ${err.toString()}');
+      handleError(err);
+    }
+    return null;
+  }
+  @override
+  Future deleteFirebaseToken() async {
+    try {
+      Response response = await _dioClient.post(ApiEndpoint.DELETE_FIREBASE_TOKEN);
+      if (response.statusCode == ServerStatus.SUCCESS) {
+        return response.data;
+      }
+      throw NetworkException(message: response.statusMessage, statusCode: response.statusCode);
+    } catch (err) {
+      LogUtils.logE(message: 'deleteFirebaseToken error ${err.toString()}');
+      handleError(err);
+    }
+    return null;
+  }
 }

@@ -88,7 +88,7 @@ class MetadataService extends GetxService implements MetadataHelper {
         var temp = allEmployee.map((ite) => OptionModel(key: "${ite.id}", value: "${ite.ten}")).toList();
         temp.insert(0, TaskStatus.DEFAULT_FILTER);
 
-        return [TaskFilter(label: AppStrings.phutrach_label.tr, permission: per.permission, options: temp, type: FilterType.NGUOI_PHU_TRACH)];
+        return [TaskFilter(label: AppStrings.thuc_hien_label.tr, permission: per.permission, options: temp, type: FilterType.NGUOI_NHAN_VIEC)];
     }
     return null;
   }

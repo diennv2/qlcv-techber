@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "994460958139",
+    "project_id": "qlcv-56260",
+    "storage_bucket": "qlcv-56260.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994460958139:android:8125a328747a8a2aa6189e",
+        "android_client_info": {
+          "package_name": "com.techber.qlcv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB00T0H4LUIsZvTzomJsURlhRO8tMOibuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

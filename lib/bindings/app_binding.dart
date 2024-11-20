@@ -7,6 +7,7 @@ import 'package:mobile_rhm/app_services/story/calendar/calendar_service.dart';
 import 'package:mobile_rhm/app_services/story/rhm_service.dart';
 import 'package:mobile_rhm/app_services/story/user/user_service.dart';
 
+import '../app_services/noti/notification_service.dart';
 import '../app_services/story/tasks/task_service.dart';
 
 class AppBinding extends Bindings {
@@ -24,5 +25,6 @@ class AppBinding extends Bindings {
     Get.lazyPut(() => CalendarService());
     Get.lazyPut(() => TaskService());
     Get.lazyPut(() => RHMService());
+    Get.lazyPut(() => NotificationService());
   }
 }

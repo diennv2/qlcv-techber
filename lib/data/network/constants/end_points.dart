@@ -45,6 +45,8 @@ class ApiEndpoint {
   //Notification
   static const String NOTIFICATION_LIST = "@domain/api/get_notification.html";
   static const String UPDATE_READ_NOTIFICATION = "@domain/api/set_notification.html";
+  static const String PUSH_FIREBASE_TOKEN = "@domain/api/setdevicetoken.html";
+  static const String DELETE_FIREBASE_TOKEN = "@domain/api/deletetoken.html";
 
   //Calendar
   static const String CALENDAR_LIST = "@domain/api/getall_calendar.html";
