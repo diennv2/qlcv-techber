@@ -22,22 +22,18 @@ class CalendarLogic extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    initializeCurrentYear();
     fetchEvents();
     searchEventNameController.addListener(_onSearchChanged);
     addScrollListener();
   }
+
   void setStartDate(DateTime date) {
-    print('Đã chọn ngày bắt đầu: $date');
-    state.setBeginDate(date);
-    isStartDateSelected.value = true;
-    checkAndFetchEvents();
+    state.beginDate.value = date;
   }
 
   void setEndDate(DateTime date) {
-    print('Đã chọn ngày kết thúc: $date');
-    state.setEndDate(date);
-    isEndDateSelected.value = true;
-    checkAndFetchEvents();
+    state.endDate.value = date;
   }
 
   void checkAndFetchEvents() {
@@ -87,20 +83,17 @@ class CalendarLogic extends GetxController {
   }
 
   Future<void> fetchEvents() async {
-    print('Đang lấy sự kiện từ ${state.beginDate.value} đến ${state.endDate.value}');
     state.setLoading(true);
     try {
       final String begin = state.beginDate.value.toIso8601String();
       final String end = state.endDate.value.toIso8601String();
 
-      print('Gọi API với begin: $begin, end: $end');
-      final List<CalendarTask>? fetchedTasks = await _rhmService.calendarService.getAllTaskCalendar(begin: begin, end: end);
+      final List<CalendarTask>? fetchedTasks = await _rhmService.calendarService.getAllTaskCalendar(
+        begin: begin,
+        end: end,
+      );
 
       if (fetchedTasks != null) {
-        print('Dữ liệu thô từ API: ${fetchedTasks.length} công việc');
-        print('Dữ liệu chi tiết: $fetchedTasks');
-
-        // Tiếp tục xử lý dữ liệu như bình thường
         final List<CalendarEventData<CalendarTask>> fetchedEvents = fetchedTasks.map((task) =>
             CalendarEventData<CalendarTask>(
               date: task.start ?? DateTime.now(),
@@ -111,22 +104,35 @@ class CalendarLogic extends GetxController {
               endTime: task.end ?? DateTime.now().add(Duration(hours: 1)),
             )
         ).toList();
-
-        print('Số lượng sự kiện sau khi xử lý: ${fetchedEvents.length}');
-
         state.setEvents(fetchedEvents);
         _updateEventController();
         state.setError('');
       } else {
-        print('Không tìm thấy sự kiện nào');
         state.setError('Không tìm thấy sự kiện nào');
       }
     } catch (e) {
-      print('Lỗi khi lấy sự kiện: $e');
       state.setError('Lỗi khi lấy sự kiện: $e');
     } finally {
       state.setLoading(false);
     }
+  }
+
+  void initializeCurrentYear() {
+    final now = DateTime.now();
+    final startOfYear = DateTime(now.year, 1, 1);
+    final endOfYear = DateTime(now.year, 12, 31);
+    state.setBeginDate(startOfYear);
+    state.setEndDate(endOfYear);
+    state.setSelectedYear(now.year);
+    state.setSelectedMonth(now);
+  }
+
+  void setSelectedMonth(DateTime month) {
+    state.setSelectedMonth(month);
+    final startOfMonth = DateTime(month.year, month.month, 1);
+    final endOfMonth = DateTime(month.year, month.month + 1, 0);
+    state.setBeginDate(startOfMonth);
+    state.setEndDate(endOfMonth);
   }
 
   void onDateRangeChanged(DateTime begin, DateTime end) {
@@ -228,6 +234,22 @@ class CalendarLogic extends GetxController {
 
   void showFilter({required dynamic filter}) {
     // TODO: Implement filter logic
+  }
+  /// Lọc các sự kiện trong khoảng thời gian được chọn
+  void fetchEventsInRange() {
+    final DateTime startDate = state.beginDate.value;
+    final DateTime endDate = state.endDate.value;
+
+    // Lọc sự kiện trong khoảng thời gian
+    final filteredEvents = state.events.where((event) {
+      return event.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
+          event.date.isBefore(endDate.add(const Duration(days: 1)));
+    }).toList();
+
+    // Cập nhật danh sách sự kiện đã lọc
+    eventController.removeWhere((element) => true); // Xóa các sự kiện hiện tại
+    eventController.addAll(filteredEvents); // Thêm các sự kiện đã lọc
+    print('Đã lọc ${filteredEvents.length} sự kiện trong khoảng thời gian');
   }
 
   void deleteFilter() {

@@ -2,6 +2,7 @@ import 'package:expansion_tile_group/expansion_tile_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_rhm/app_widgets/button/app_solid_button.dart';
 import 'package:mobile_rhm/app_widgets/task/report_item_view.dart';
 import 'package:mobile_rhm/core/constants/task.dart';
@@ -111,10 +112,29 @@ class SubTaskItemView extends StatelessWidget {
                           width: 4.w,
                         ),
                         Expanded(
-                            child: Text(
-                          (detail?.ngayhoanthanh ?? '').isNotNullOrEmpty ? detail!.ngayhoanthanh! : AppStrings.unknown_deadline.tr,
-                          style: AppTextStyle.medium_14,
-                        ))
+                          child: Builder(
+                            builder: (context) {
+                              String displayText = AppStrings.unknown_deadline.tr;
+
+                              if ((detail?.ngayhoanthanh ?? '').isNotNullOrEmpty) {
+                                try {
+                                  // Assuming the original format is 'yyyy-MM-dd'
+                                  DateTime date = DateFormat('yyyy-MM-dd').parse(detail!.ngayhoanthanh!);
+                                  // Formatting to 'd-M-y'
+                                  displayText = DateFormat('d-M-y').format(date);
+                                } catch (e) {
+                                  // If parsing fails, use the original string
+                                  displayText = detail!.ngayhoanthanh!;
+                                }
+                              }
+
+                              return Text(
+                                displayText,
+                                style: AppTextStyle.medium_14,
+                              );
+                            },
+                          ),
+                        )
                       ],
                     ),
                   ),

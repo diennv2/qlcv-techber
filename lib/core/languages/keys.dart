@@ -25,6 +25,7 @@ abstract class AppStrings {
   static const String btn_delete = 'btn_delete';
   static const String add_new_success = 'add_new_success';
   static const String update_success = 'update_success';
+  static const String delete_task_success = 'delete_task_success';
 
   //Authen
   static const String welcome_app = 'welcome_app';

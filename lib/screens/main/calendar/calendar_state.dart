@@ -16,6 +16,8 @@ class CalendarState {
   RxList<CalendarFilter> calendarFilters = <CalendarFilter>[].obs;
   RxBool isScrollingDown = false.obs;
   RxBool isFabExpanded = true.obs;
+  final Rx<DateTime> selectedMonth = DateTime.now().obs;
+  final RxInt selectedYear = DateTime.now().year.obs;
 
   void setEventFilters(List<EventFilters> filters) {
     eventFilters.assignAll(filters);
@@ -66,5 +68,12 @@ class CalendarState {
 
   void setError(String errorMessage) {
     error.value = errorMessage;
+  }
+  void setSelectedMonth(DateTime month) {
+    selectedMonth.value = month;
+  }
+
+  void setSelectedYear(int year) {
+    selectedYear.value = year;
   }
 }

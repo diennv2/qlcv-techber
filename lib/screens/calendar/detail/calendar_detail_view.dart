@@ -27,7 +27,7 @@ class _CalendarTaskDetailPageState extends State<CalendarTaskDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chi tiết công việc'),
+        title: const Text('Chi tiết lịch'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -62,7 +62,7 @@ class _CalendarTaskDetailPageState extends State<CalendarTaskDetailPage> {
                     _buildDateTimeField('Thời gian kết thúc', state.endTimeController, logic.selectTaskEndTime),
                     _buildTextField('Tên công việc', state.taskNameController),
                     _buildTextField('Người tạo', state.ownerNameController),
-                    _buildTextField('Lãnh đạo', state.lanhdaoNameController),
+                    _buildTextField('Lãnh đạo', state.lanhdaoNameController, maxLines: 1),
                     _buildTextField('Chi tiết', state.chitietController, maxLines: 5),
                     _buildTextField('Ghi chú', state.ghiChuController, maxLines: 3),
                   ],

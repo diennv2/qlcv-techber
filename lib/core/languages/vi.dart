@@ -27,6 +27,7 @@ const Map<String, String> vi = {
   AppStrings.btn_delete: 'Xoá',
   AppStrings.add_new_success: 'Thêm mới thành công',
   AppStrings.update_success: 'Cập nhật thành công',
+  AppStrings.delete_task_success: 'Xóa thành công',
 
   //Authen
   AppStrings.welcome_app: 'HỆ THỐNG QUẢN LÝ CÔNG VIỆC',
@@ -193,6 +194,7 @@ const Map<String, String> vi = {
   AppStrings.subtask_assign_date: 'Ngày giao việc',
   AppStrings.subtask_assign_date_hint: 'Chọn ngày giao việc',
   AppStrings.subtask_head_office_hint: 'Chọn cơ quan ban hành',
+  AppStrings.subtask_head_office: 'Cơ quan ban hành',
   AppStrings.task_content: 'Nội dung công việc',
   AppStrings.confirm_delete_file: 'Bạn có chắc chắn muốn xoá tài liệu đính kèm ?',
   AppStrings.delete_file_success: 'Xoá tài liệu đính kèm thành công',

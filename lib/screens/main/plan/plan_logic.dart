@@ -66,7 +66,7 @@ class PlanLogic extends GetxController {
   }
 
   Future<List<TaskFilter>?> loadTaskFilter() async {
-    return await _rhmService.metadataService.getTaskFilters();
+    return await _rhmService.metadataService.getTaskPlanFilters();
   }
 
   RequestFilter _getRequestFilter() {

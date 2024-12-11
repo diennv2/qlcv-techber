@@ -56,17 +56,43 @@ class CalendarDetailLogic extends GetxController {
       state.endTimeController.text = task.endtime ?? '';
       state.taskNameController.text = task.tencongviec ?? '';
       state.ownerNameController.text = task.ownerName ?? '';
-      state.lanhdaoNameController.text = task.lanhdaoName ?? '';
+      state.lanhdaoNameController.text = task.lanhdaoName ?? ''; // Hiển thị lãnh đạo nếu có
       state.chitietController.text = task.chitiet ?? '';
       state.ghiChuController.text = task.ghichutunguoiduyet ?? '';
     }
   }
+
 
   Future<void> saveTaskDetail() async {
     try {
       final task = state.task.value;
       if (task == null) return;
 
+      // Kiểm tra nếu `lanhdao` không null
+      if (task.lanhdao != null) {
+        final confirm = await Get.dialog<bool>(
+          AlertDialog(
+            title: Text('Cảnh báo'),
+            content: Text('Cập nhật lịch hẹn với lãnh đạo sẽ đưa về trạng thái chờ duyệt! Tiếp tục?'),
+            actions: [
+              TextButton(
+                child: Text('Hủy'),
+                onPressed: () => Get.back(result: false),
+              ),
+              TextButton(
+                child: Text('Tiếp tục'),
+                onPressed: () => Get.back(result: true),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm != true) {
+          return; // Nếu người dùng chọn "Hủy", dừng thực hiện
+        }
+      }
+
+      // Tạo request không truyền `lanhdao`
       var request = {
         'id': task.id,
         'tencongviec': state.taskNameController.text,
@@ -77,7 +103,7 @@ class CalendarDetailLogic extends GetxController {
       };
 
       Dio.FormData formData = Dio.FormData.fromMap(request);
-      print('FormData: ${formData.fields.map((e) => e.toString()).join(', ')}');
+      LogUtils.logE(message: 'FormData: ${formData.fields.map((e) => e.toString()).join(', ')}');
 
       final response = await _rhmService.calendarService.createOrUpdateTask(data: formData, isCreateNew: false);
 
@@ -93,8 +119,10 @@ class CalendarDetailLogic extends GetxController {
       LogUtils.logE(message: 'Lỗi khi cập nhật công việc: $e');
       Get.snackbar('Lỗi', 'Đã xảy ra lỗi khi cập nhật công việc');
     } finally {
+      // Bỏ trống nếu không có logic thêm
     }
   }
+
 
   Future<void> deleteTask() async {
     try {
@@ -106,10 +134,10 @@ class CalendarDetailLogic extends GetxController {
 
       if (response != null && response['status'] == true) {
         _rhmService.toastService.showToast(
-            message: state.task != null ? AppStrings.update_task_success.tr : AppStrings.create_new_task_success.tr,
+            message: AppStrings.delete_task_success.tr,
             isSuccess: true,
             context: Get.context!);
-        NavigationUtils.popUtils(page: Routers.MAIN);
+        Get.back(result: true); // Trả về true để báo xóa thành công
       } else {
         _rhmService.toastService.showToast(message: response['message'] ?? AppStrings.error_common.tr, isSuccess: false, context: Get.context!);
       }
@@ -117,8 +145,6 @@ class CalendarDetailLogic extends GetxController {
       Get.snackbar('Lỗi', 'Đã xảy ra lỗi khi xóa công việc');
     }
   }
-
-
 
   void selectTaskStartTime() async {
     Widget datetimePick = DateTimePicker2(

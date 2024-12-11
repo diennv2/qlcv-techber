@@ -30,22 +30,37 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    widget.calendarLogic.fetchEvents();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.calendarLogic.fetchEvents(); // Tự động làm mới khi quay lại màn hình
+    });
+
   }
 
-  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+  Future<void> _selectMonth(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: isStartDate ? widget.state.beginDate.value : widget.state.endDate.value,
+      initialDate: widget.state.selectedMonth.value,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      initialDatePickerMode: DatePickerMode.year,
     );
     if (picked != null) {
-      if (isStartDate) {
-        widget.calendarLogic.setStartDate(picked);
-      } else {
-        widget.calendarLogic.setEndDate(picked);
-      }
+      widget.calendarLogic.setSelectedMonth(picked);
+      await widget.calendarLogic.fetchEvents();
+    }
+  }
+
+  Future<void> _selectYear(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(widget.state.selectedYear.value),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      initialDatePickerMode: DatePickerMode.year,
+    );
+    if (picked != null) {
+      widget.state.setSelectedYear(picked.year);
+      await widget.calendarLogic.fetchEvents();
     }
   }
 
@@ -128,7 +143,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   style: AppTextStyle.regular_14,
                 ),
               ),
-              onTap: () => _selectDate(context, true),
+              onTap: () => _selectMonth(context),
             )),
           ),
           SizedBox(width: 8.w),
@@ -146,8 +161,113 @@ class _CalendarPageState extends State<CalendarPage> {
                   style: AppTextStyle.regular_14,
                 ),
               ),
-              onTap: () => _selectDate(context, false),
+              onTap: () => _selectMonth(context),
             )),
+          ),
+          SizedBox(width: 8.w),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.PrimaryGradientButton,
+              padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 24.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () async {
+              await widget.calendarLogic.fetchEvents();
+            },
+            child: Text(
+              'Xem',
+              style: AppTextStyle.bold_16.copyWith(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildYearPicker() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: Obx(() => TouchableOpacity(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+                decoration: BoxDecoration(
+                  color: AppColors.White,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.Border),
+                ),
+                child: Text(
+                  'Năm: ${widget.state.selectedYear.value}',
+                  style: AppTextStyle.regular_14,
+                ),
+              ),
+              onTap: () => _selectYear(context),
+            )),
+          ),
+          SizedBox(width: 8.w),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.PrimaryGradientButton,
+              padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 24.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () async {
+              await widget.calendarLogic.fetchEvents();
+            },
+            child: Text(
+              'Xem',
+              style: AppTextStyle.bold_16.copyWith(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonthPicker() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: Obx(() => TouchableOpacity(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+                decoration: BoxDecoration(
+                  color: AppColors.White,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.Border),
+                ),
+                child: Text(
+                  'Tháng: ${DateFormat('MM/yyyy').format(widget.state.selectedMonth.value)}',
+                  style: AppTextStyle.regular_14,
+                ),
+              ),
+              onTap: () => _selectMonth(context),
+            )),
+          ),
+          SizedBox(width: 8.w),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.PrimaryGradientButton,
+              padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 24.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () async {
+              await widget.calendarLogic.fetchEvents();
+            },
+            child: Text(
+              'Xem',
+              style: AppTextStyle.bold_16.copyWith(color: Colors.white),
+            ),
           ),
         ],
       ),

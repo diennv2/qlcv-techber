@@ -50,7 +50,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.techber.qlcv"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 33
         versionCode 17
         versionName '2.1.7'
         setProperty("archivesBaseName", applicationId + "-v" + versionCode + "(" + versionName + ")")

@@ -29,6 +29,7 @@ class MetadataService extends GetxService implements MetadataHelper {
   List<Employee> allEmployee = [];
   Map<String, List<Employee>> employeeByDepartment = {};
   List<TaskFilter> taskFilters = [];
+  List<TaskFilter> taskPlanFilters = [];
 
   @override
   void onInit() {
@@ -93,6 +94,31 @@ class MetadataService extends GetxService implements MetadataHelper {
     return null;
   }
 
+  Future<List<TaskFilter>?> createTaskPlanFilter({required Permission per}) async {
+    switch (per.permission) {
+      case PermissonList.PHONG_BAN_INDEX:
+        await getPhongBan();
+        var temp = phongBans.map((ite) => OptionModel(key: "${ite.id}", value: "${ite.ten}")).toList();
+        temp.insert(0, TaskStatus.DEFAULT_FILTER);
+
+        return [TaskFilter(label: AppStrings.phongban_label.tr, permission: per.permission, options: temp, type: FilterType.PHONG_BAN)];
+      case PermissonList.LOAI_DUAN_INDEX:
+        await getLoaiCongViecKeHoach();
+        var temp = typeOfWorksPlan.map((ite) => OptionModel(key: "${ite.id}", value: "${ite.tenloai}")).toList();
+        temp.insert(0, TaskStatus.DEFAULT_FILTER);
+
+        return [TaskFilter(label: AppStrings.task_type_label.tr, permission: per.permission, options: temp, type: FilterType.LOAI_DU_AN)];
+
+      case PermissonList.ADMIN_INDEX:
+        await getEmployee();
+        var temp = allEmployee.map((ite) => OptionModel(key: "${ite.id}", value: "${ite.ten}")).toList();
+        temp.insert(0, TaskStatus.DEFAULT_FILTER);
+
+        return [TaskFilter(label: AppStrings.thuc_hien_label.tr, permission: per.permission, options: temp, type: FilterType.NGUOI_NHAN_VIEC)];
+    }
+    return null;
+  }
+
   @override
   Future<List<TaskFilter>> getTaskFilters() async {
     if (taskFilters.isEmpty) {
@@ -115,6 +141,30 @@ class MetadataService extends GetxService implements MetadataHelper {
     }
 
     return taskFilters;
+  }
+
+  @override
+  Future<List<TaskFilter>> getTaskPlanFilters() async {
+    if (taskPlanFilters.isEmpty) {
+      taskPlanFilters.clear();
+      UserProfile? userProfile = _repositoryManager.getUserProfile();
+      if (userProfile != null) {
+        List<Permission> finalList = (userProfile.permission ?? []);
+        finalList = finalList.toSet().toList();
+        for (Permission per in finalList) {
+          LogUtils.logE(message: 'Loop permission ${per.permission}');
+          List<TaskFilter>? items = await createTaskPlanFilter(per: per);
+          if (items != null) {
+            taskPlanFilters.addAll(items);
+          }
+        }
+      }
+      //TODO: Add default filter status
+      TaskFilter statusTaskFilter = TaskFilter(label: AppStrings.status_label.tr, options: TaskStatus.TASK_FILTER, type: FilterType.STATUS);
+      taskPlanFilters.insert(0, statusTaskFilter);
+    }
+
+    return taskPlanFilters;
   }
 
   @override
@@ -224,6 +274,7 @@ class MetadataService extends GetxService implements MetadataHelper {
     phongBans.clear();
     lanhDaos.clear();
     typeOfWorks.clear();
+    typeOfWorksPlan.clear();
     allEmployee.clear();
     employeeByDepartment.clear();
     taskFilters.clear();
